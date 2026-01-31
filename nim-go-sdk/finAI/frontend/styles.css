@@ -116,8 +116,6 @@ body {
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  display: flex;
-  gap: 0.75rem;
   transition: all 0.2s ease;
   animation: slideIn 0.3s ease;
 }
@@ -144,14 +142,8 @@ body {
   border-left: 3px solid var(--beige);
 }
 
-.alert-icon {
-  font-size: 1.25rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
 .alert-content {
-  flex: 1;
+  width: 100%;
 }
 
 .alert-message {

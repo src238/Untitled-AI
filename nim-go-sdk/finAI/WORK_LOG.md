@@ -591,11 +591,304 @@ CRITICAL RULES:
 
 ---
 
+### 11. AI Chat Fix - Part 1: Conversation Initialization ✅ COMPLETED
+**File Modified**: `/home/sholto/Documents/Hobbies/hackathons/nim-go-sdk/finAI/frontend/main.tsx`
+**Time**: 22:50:03
+**Status**: Deployed via hot reload
+
+#### Problem:
+- AI chat on the right side was not working
+- Backend was returning error: "No active conversation. Send 'new_conversation' first."
+- Frontend was not initializing conversation with nim-go-sdk server
+
+#### Solution:
+**Added Conversation Initialization** (lines 109-117):
+- Send `new_conversation` message when WebSocket connects
+- Message format: `{ type: 'new_conversation', user: 'user' }`
+- Ensures conversation is ready before user sends messages
+
+**Code Changes:**
+```typescript
+ws.onopen = () => {
+  setIsConnected(true)
+  console.log('Connected to AI assistant')
+  // Initialize conversation with the nim-go-sdk server
+  ws.send(JSON.stringify({
+    type: 'new_conversation',
+    user: 'user'
+  }))
+}
+```
+
+#### Verification:
+Backend logs confirm successful initialization:
+```
+Received message type=new_conversation from user=user
+Started conversation 72a0590e-44f0-4fab-a0fb-57c327a93f16 for user user
+```
+
+---
+
+### 12. AI Chat Fix - Part 2: Message Type Mismatch ✅ COMPLETED
+**File Modified**: `/home/sholto/Documents/Hobbies/hackathons/nim-go-sdk/finAI/frontend/main.tsx`
+**Time**: 22:52:59
+**Status**: Deployed via hot reload
+
+#### Problem:
+- Conversation initialized successfully but AI responses not displaying
+- Backend logs showed AI responding: "I hear you! 😄 That's the classic developer response..."
+- Frontend not receiving/displaying these responses
+
+#### Root Cause Analysis:
+After investigating nim-go-sdk server code (`/server/server.go` line 407, `/server/protocol.go` line 14):
+- Backend sends messages with `type: "text"`
+- Frontend was checking for `type === 'message'`
+- Message type mismatch caused responses to be ignored
+
+#### Solution:
+**Fixed Message Type Check** (line 123):
+```typescript
+// BEFORE: if (data.type === 'message' && data.content)
+// AFTER:  if (data.type === 'text' && data.content)
+```
+
+**Added Streaming Support** (lines 125-137):
+- Added handler for `type: 'text_chunk'` messages
+- Enables real-time streaming responses from Claude
+- Appends chunks to last assistant message for smooth display
+
+**Code Changes:**
+```typescript
+if (data.type === 'text' && data.content) {
+  setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
+} else if (data.type === 'text_chunk' && data.content) {
+  // Handle streaming text chunks
+  setMessages(prev => {
+    const newMessages = [...prev]
+    if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
+      newMessages[newMessages.length - 1].content += data.content
+    } else {
+      newMessages.push({ role: 'assistant', content: data.content })
+    }
+    return newMessages
+  })
+}
+```
+
+#### Backend Message Types (from nim-go-sdk):
+- `conversation_started` - Conversation created
+- `conversation_resumed` - Existing conversation resumed
+- `text` - Complete AI response
+- `text_chunk` - Streaming response chunk
+- `confirm_request` - Tool confirmation needed
+- `complete` - Turn complete with token usage
+- `error` - Error message
+
+**Result**: AI chat now fully functional ✅
+- Users can send messages to the AI assistant
+- AI responses display correctly in the chat interface
+- Streaming responses work smoothly
+- Full integration with Claude Sonnet 4 and all banking tools
+
+---
+
+### 13. Duplicate Response Fix ✅ COMPLETED
+**File Modified**: `/home/sholto/Documents/Hobbies/hackathons/nim-go-sdk/finAI/frontend/main.tsx`
+**Time**: 23:00:49
+**Status**: Deployed via hot reload
+
+#### Problem:
+- Users seeing duplicate AI responses for every prompt
+- Same reply appearing twice in the chat interface
+
+#### Root Cause Analysis:
+After investigating backend flow from nim-go-sdk server:
+1. When streaming is enabled, backend sends `text_chunk` messages as AI generates response
+2. Frontend appends these chunks to build up the message progressively
+3. **Then backend sends a final `text` message with the complete response**
+4. Frontend was adding this as a NEW message, creating a duplicate
+
+**Backend Flow** (from `/server/server.go`):
+```go
+// Lines 380-384: Stream chunks
+if !s.config.DisableStreaming {
+    input.StreamCallback = func(chunk string, done bool) {
+        if !done && chunk != "" {
+            s.send(conn, ServerMessage{Type: "text_chunk", Content: chunk})
+        }
+    }
+}
+
+// Line 407: Then send complete text
+s.send(conn, ServerMessage{Type: "text", Content: output.Text})
+```
+
+#### Solution:
+**Added Deduplication Logic** (lines 123-133):
+- Check if final `text` message matches already-streamed content
+- If last message is from assistant and content matches, skip it
+- Only add as new message if content is different (non-streaming mode)
+
+**Code Changes:**
+```typescript
+if (data.type === 'text' && data.content) {
+  // Check if we already have this message from streaming chunks
+  setMessages(prev => {
+    const lastMsg = prev[prev.length - 1]
+    // If last message is from assistant and matches this content, skip (already streamed)
+    if (lastMsg && lastMsg.role === 'assistant' && lastMsg.content === data.content) {
+      return prev  // Skip duplicate
+    }
+    // Otherwise add it as a new message
+    return [...prev, { role: 'assistant', content: data.content }]
+  })
+}
+```
+
+#### Flow After Fix:
+1. ✅ `text_chunk` messages → Build up message progressively
+2. ✅ Final `text` message → Check for duplicate, skip if already exists
+3. ✅ Result: Single response displayed, no duplicates
+
+**Result**: Duplicate responses eliminated ✅
+- Chat now shows single response per prompt
+- Streaming works correctly without creating duplicates
+- Non-streaming mode still works (adds message if no prior streaming)
+
+---
+
+### 14. Remove Non-Functional Buttons ✅ COMPLETED
+**File Modified**: `/home/sholto/Documents/Hobbies/hackathons/nim-go-sdk/finAI/frontend/main.tsx`
+**Time**: 23:03:15
+**Status**: Deployed via hot reload
+
+#### Changes:
+- Removed non-functional "Send" and "Receive" buttons from balance header
+- Removed entire `balance-actions` div container (lines 264-267)
+- Cleaner interface focused on balance display and transaction history
+
+**Before:**
+```tsx
+<div className="balance-actions">
+  <button className="action-btn action-send">Send</button>
+  <button className="action-btn action-receive">Receive</button>
+</div>
+```
+
+**After:**
+- Buttons removed completely
+- Balance header now only displays current balance
+
+**Result**: Cleaner UI without non-functional elements ✅
+
+---
+
+### 15. Remove Alert Icons for More Text Space ✅ COMPLETED
+**Files Modified**:
+- `/home/sholto/Documents/Hobbies/hackathons/nim-go-sdk/finAI/frontend/main.tsx`
+- `/home/sholto/Documents/Hobbies/hackathons/nim-go-sdk/finAI/frontend/styles.css`
+**Time**: 23:05:30
+**Status**: Deployed via hot reload
+
+#### Changes:
+**Removed Alert Icons (main.tsx lines 240-244):**
+- Removed the icon div that displayed ⚠, ✓, and ℹ symbols
+- Alert content now takes full width of the card
+
+**Updated CSS (styles.css):**
+1. Removed flexbox layout from `.alert-card` (lines 119-120)
+   - Removed `display: flex;` and `gap: 0.75rem;`
+2. Removed `.alert-icon` CSS rule entirely
+3. Updated `.alert-content` from `flex: 1;` to `width: 100%;`
+
+**Before:**
+```
+[✓] Echo Dot 5th Gen ($49.99) - Alternative: Google Nest Mini...
+```
+
+**After:**
+```
+Echo Dot 5th Gen ($49.99) - Alternative: Google Nest Mini...
+```
+
+**Result**: More space for alert message text ✅
+- Icon space reclaimed for message content
+- Cleaner, more readable insight notifications
+- Full width utilized for recommendation details
+
+---
+
 **Session Status**: Both servers running successfully ✅
 **Backend**: Actively checking purchases for cheaper alternatives every 30s (Process: bd2be2f)
+**Frontend**: Running with hot reload (Process: b27c8a5)
 **Transactions**: All 60 mock transactions displayed with correct arrows
 **Links**: All recommendations include clickable purchase links
 **Filter**: Only showing alternatives with >= $5 savings
 **Format**: Clean, readable format without "You bought:" prefix or vertical pipes
+**Chat**: AI assistant fully functional - no duplicates, streaming works perfectly ✅
+**UI**: Clean interface - non-functional buttons removed, icons removed for more text space ✅
 **Document Created**: January 31, 2026, 20:33 UTC
-**Last Updated**: January 31, 2026, 22:35 UTC
+**Last Updated**: January 31, 2026, 23:05 UTC
+
+### 16. Code Refactoring - Backend Modularity ✅ COMPLETED
+**Files Created/Modified**: 8 backend files
+**Time**: 23:20:33
+**Status**: Deployed and running successfully
+
+#### Problem:
+- main.go was 1375 lines - monolithic and hard to maintain
+- Poor separation of concerns - all code in single file
+- Magic numbers and strings scattered throughout (30 seconds, "8080", etc.)
+- Heavy use of map[string]interface{} - lack of type safety
+- Duplicate code in multiple places
+
+#### Solution - Modular File Structure:
+**1. config.go** - Configuration and constants (all magic numbers extracted)
+**2. types.go** - Type definitions (Alert, Transaction, parameter structs)
+**3. handlers.go** - HTTP request handlers (setupHTTPHandlers, etc.)
+**4. transactions.go** - Transaction parsing utilities
+**5. analysis.go** - Background AI analysis loop (product checking)
+**6. prompts.go** - AI system prompts
+**7. tools.go** - Custom tool creation functions
+**8. main.go** (refactored) - 81 lines (was 1375) - clean initialization
+
+#### Improvements:
+- **94% reduction**: Main file: 1375 lines → 81 lines
+- **Named constants**: DefaultPort, AnalysisInterval, MinimumSavings, etc.
+- **Type safety**: Proper structs instead of map[string]interface{}
+- **Single responsibility**: Each file has clear, focused purpose
+- **DRY principle**: Eliminated duplicate code
+- **Better error handling**: Improved error messages
+- **Easier navigation**: Find functionality by filename
+
+**Result**: Backend is now highly modular and maintainable ✅
+
+---
+
+### 17. Code Refactoring - Frontend Structure ✅ STARTED
+**Files Created**: 5 frontend foundational files
+**Time**: 23:24:00
+**Status**: Foundation complete, ready for component extraction
+
+#### Files Created:
+**1. src/constants.ts** - Application constants (API URLs, intervals)
+**2. src/types.ts** - TypeScript interfaces (Transaction, Alert, Message)
+**3. src/utils/formatters.ts** - Utility functions (formatTimestamp, formatCurrency, renderLinksInText)
+**4. src/hooks/useWebSocket.ts** - WebSocket management hook (151 lines of extracted logic)
+
+#### Directory Structure:
+```
+frontend/src/
+├── components/     (ready for extraction)
+├── hooks/
+│   └── useWebSocket.ts
+├── utils/
+│   └── formatters.ts
+├── constants.ts
+└── types.ts
+```
+
+**Next Steps**: Extract components (AlertsSidebar, ChatSidebar, TransactionsList, BalanceHeader)
+
+---
+

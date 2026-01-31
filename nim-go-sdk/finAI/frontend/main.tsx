@@ -109,14 +109,41 @@ function App() {
     ws.onopen = () => {
       setIsConnected(true)
       console.log('Connected to AI assistant')
+      // Initialize conversation with the nim-go-sdk server
+      ws.send(JSON.stringify({
+        type: 'new_conversation',
+        user: 'user'
+      }))
     }
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
 
-        if (data.type === 'message' && data.content) {
-          setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
+        if (data.type === 'text' && data.content) {
+          // Check if we already have this message from streaming chunks
+          setMessages(prev => {
+            const lastMsg = prev[prev.length - 1]
+            // If last message is from assistant and matches this content, skip (already streamed)
+            if (lastMsg && lastMsg.role === 'assistant' && lastMsg.content === data.content) {
+              return prev
+            }
+            // Otherwise add it as a new message
+            return [...prev, { role: 'assistant', content: data.content }]
+          })
+        } else if (data.type === 'text_chunk' && data.content) {
+          // Handle streaming text chunks
+          setMessages(prev => {
+            const newMessages = [...prev]
+            if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
+              // Append to last assistant message
+              newMessages[newMessages.length - 1].content += data.content
+            } else {
+              // Create new assistant message
+              newMessages.push({ role: 'assistant', content: data.content })
+            }
+            return newMessages
+          })
         } else if (data.type === 'alert') {
           const newAlert: Alert = {
             id: Date.now().toString(),
@@ -210,11 +237,6 @@ function App() {
           ) : (
             alerts.map(alert => (
               <div key={alert.id} className={`alert-card alert-${alert.type}`}>
-                <div className="alert-icon">
-                  {alert.type === 'warning' && '⚠'}
-                  {alert.type === 'success' && '✓'}
-                  {alert.type === 'info' && 'ℹ'}
-                </div>
                 <div className="alert-content">
                   <p className="alert-message">{renderAlertMessage(alert.message)}</p>
                   <time className="alert-time">{alert.timestamp}</time>
@@ -233,10 +255,6 @@ function App() {
             <h1 className="balance-amount">
               ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h1>
-          </div>
-          <div className="balance-actions">
-            <button className="action-btn action-send">Send</button>
-            <button className="action-btn action-receive">Receive</button>
           </div>
         </header>
 
