@@ -29,13 +29,7 @@ function App() {
   const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws'
   const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
   const [balance, setBalance] = useState<number>(2547.83)
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: '1', amount: -45.50, description: 'Grocery Store', date: '2026-01-31', type: 'debit', merchant: 'Whole Foods' },
-    { id: '2', amount: 1200.00, description: 'Salary Deposit', date: '2026-01-30', type: 'credit' },
-    { id: '3', amount: -89.99, description: 'Internet Bill', date: '2026-01-29', type: 'debit', merchant: 'Comcast' },
-    { id: '4', amount: -15.00, description: 'Coffee Shop', date: '2026-01-28', type: 'debit', merchant: 'Blue Bottle' },
-    { id: '5', amount: -320.00, description: 'Rent Payment', date: '2026-01-27', type: 'debit' },
-  ])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [alerts, setAlerts] = useState<Alert[]>([])
 
   const [messages, setMessages] = useState<Message[]>([
@@ -53,6 +47,23 @@ function App() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Fetch transactions on mount
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/api/transactions`)
+        if (response.ok) {
+          const data = await response.json()
+          setTransactions(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch transactions:', error)
+      }
+    }
+
+    fetchTransactions()
+  }, [apiBaseUrl])
 
   // Poll alerts API every 5 seconds
   useEffect(() => {
@@ -160,6 +171,29 @@ function App() {
     setInputValue('')
   }
 
+  // Helper function to render alert message with clickable links
+  const renderAlertMessage = (message: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    const parts = message.split(urlRegex)
+
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="alert-link"
+          >
+            {part}
+          </a>
+        )
+      }
+      return <span key={index}>{part}</span>
+    })
+  }
+
   return (
     <div className="dashboard-container">
       {/* Left Sidebar - AI Alerts */}
@@ -182,7 +216,7 @@ function App() {
                   {alert.type === 'info' && 'ℹ'}
                 </div>
                 <div className="alert-content">
-                  <p className="alert-message">{alert.message}</p>
+                  <p className="alert-message">{renderAlertMessage(alert.message)}</p>
                   <time className="alert-time">{alert.timestamp}</time>
                 </div>
               </div>
@@ -212,7 +246,7 @@ function App() {
             {transactions.map(tx => (
               <div key={tx.id} className="transaction-item">
                 <div className="transaction-icon">
-                  {tx.type === 'credit' ? '↓' : '↑'}
+                  {tx.type === 'credit' ? '↑' : '↓'}
                 </div>
                 <div className="transaction-details">
                   <span className="transaction-description">{tx.description}</span>

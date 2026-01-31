@@ -22,10 +22,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Global alert storage
+// Global alert storage and product tracking
 var (
-	alertsMutex sync.RWMutex
-	alerts      []Alert
+	alertsMutex         sync.RWMutex
+	alerts              []Alert
+	checkedProductsMutex sync.RWMutex
+	checkedProducts     map[string]bool // Track which products have been checked for alternatives
 )
 
 // Alert represents a notification for the user
@@ -40,6 +42,9 @@ func main() {
 	// ============================================================================
 	// CONFIGURATION
 	// ============================================================================
+	// Initialize global tracking map
+	checkedProducts = make(map[string]bool)
+
 	// Load .env file if it exists (optional - will use system env vars if not found)
 	_ = godotenv.Load()
 
@@ -182,11 +187,58 @@ func main() {
 		json.NewEncoder(w).Encode(recentAlerts)
 	})
 
+	// Add HTTP endpoint for transactions
+	http.HandleFunc("/api/transactions", func(w http.ResponseWriter, r *http.Request) {
+		// Enable CORS
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET")
+		w.Header().Set("Content-Type", "application/json")
+
+		// Read mock transactions file
+		fileContent, err := os.ReadFile("mock_transactions.txt")
+		if err != nil {
+			http.Error(w, "Failed to read transactions", http.StatusInternalServerError)
+			return
+		}
+
+		// Parse transactions
+		transactions := parseMockTransactions(string(fileContent))
+
+		// Convert to frontend format
+		formattedTransactions := []map[string]interface{}{}
+		for i, tx := range transactions {
+			date, _ := tx["date"].(string)
+			merchant, _ := tx["merchant"].(string)
+			product, _ := tx["product"].(string)
+			amountStr, _ := tx["amount"].(string)
+
+			// Parse amount (remove $ and convert to float)
+			amountStr = strings.TrimPrefix(amountStr, "$")
+			amount := 0.0
+			fmt.Sscanf(amountStr, "%f", &amount)
+
+			// Determine type (all mock transactions are debits/purchases)
+			txType := "debit"
+
+			formattedTransactions = append(formattedTransactions, map[string]interface{}{
+				"id":          fmt.Sprintf("tx-%d", i+1),
+				"amount":      -amount, // Negative for debits
+				"description": product,
+				"date":        date,
+				"type":        txType,
+				"merchant":    merchant,
+			})
+		}
+
+		json.NewEncoder(w).Encode(formattedTransactions)
+	})
+
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	log.Println("🚀 Hackathon Starter Server Running")
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	log.Printf("📡 WebSocket endpoint: ws://localhost:%s/ws", port)
 	log.Printf("🔔 Alerts API: http://localhost:%s/api/alerts", port)
+	log.Printf("💳 Transactions API: http://localhost:%s/api/transactions", port)
 	log.Printf("💚 Health check: http://localhost:%s/health", port)
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	log.Println("Ready for connections! Start your frontend with: cd frontend && npm run dev")
@@ -203,70 +255,66 @@ func main() {
 // This prompt defines your AI agent's personality and behavior
 // Customize this to match your hackathon project's focus!
 
-const hackathonSystemPrompt = `You are Nim, a friendly AI financial assistant built for the Liminal Vibe Banking Hackathon.
+const hackathonSystemPrompt = `You are Nim, a smart shopping assistant that helps users find better deals and save money.
 
 WHAT YOU DO:
-You help users manage their money using Liminal's stablecoin banking platform. You can check balances, review transactions, send money, and manage savings - all through natural conversation.
+You help users save money by automatically analyzing their purchases and finding cheaper alternatives that preserve or improve quality. The system continuously checks recent purchases and posts money-saving recommendations to the notice board.
 
 CONVERSATIONAL STYLE:
-- Be warm, friendly, and conversational - not robotic
-- Use casual language when appropriate, but stay professional about money
+- Be warm, friendly, and focused on helping users save money
+- Use casual language when appropriate, but stay professional about finances
 - Ask clarifying questions when something is unclear
 - Remember context from earlier in the conversation
 - Explain things simply without being condescending
 
+CORE FUNCTIONALITY:
+The system automatically:
+1. Monitors all purchases from the past week
+2. Checks each purchase for cheaper alternatives while preserving quality
+3. Posts savings opportunities to the notice board
+4. Tracks which products have been checked to avoid duplicates
+5. Resets and rechecks after all products are analyzed
+
 WHEN TO USE TOOLS:
-- Use tools immediately for simple queries ("what's my balance?")
-- For actions, gather all required info first ("send $50 to @alice")
-- Always confirm before executing money movements
+- Use tools immediately for simple queries ("what did I buy?")
+- Use read_mock_transactions to view purchase history
+- Use search_product_alternatives when users ask about specific product alternatives
+- Use post_alert to share important savings insights
 - Don't use tools for general questions about how things work
 
-MONEY MOVEMENT RULES (IMPORTANT):
-- ALL money movements require explicit user confirmation
-- Show a clear summary before confirming:
-  * send_money: "Send $50 USD to @alice"
-  * deposit_savings: "Deposit $100 USD into savings"
-  * withdraw_savings: "Withdraw $50 USD from savings"
-- Never assume amounts or recipients
-- Always use the exact currency the user specified
-
-AVAILABLE BANKING TOOLS:
-- Check wallet balance (get_balance)
-- Check savings balance and APY (get_savings_balance)
-- View savings rates (get_vault_rates)
-- Get profile info (get_profile)
-- Search for users (search_users)
-- Send money (send_money) - requires confirmation
-- Deposit to savings (deposit_savings) - requires confirmation
-- Withdraw from savings (withdraw_savings) - requires confirmation
-
-CUSTOM ANALYTICAL TOOLS:
-- Analyze spending patterns (analyze_spending)
-- Analyze purchased products from transactions (analyze_products) - uses AI to identify what products were bought
-- Read mock transaction history (read_mock_transactions) - access detailed mock credit card transactions for testing and analysis
-- Search product alternatives (search_product_alternatives) - find better or cheaper alternatives to products purchased in transaction history
-- Post alert notifications (post_alert) - send important insights and notifications to the user's alert sidebar. Use this to proactively notify users about spending patterns, savings opportunities, unusual transactions, or financial recommendations
-- Read alert notifications (read_alerts) - check what alerts have been previously posted to avoid duplicates and reference past notifications in conversation
+AVAILABLE TOOLS:
+- Read mock transaction history (read_mock_transactions) - access detailed credit card transactions
+- Search product alternatives (search_product_alternatives) - find cheaper alternatives to purchased products
+- Post alert notifications (post_alert) - send savings opportunities to the notice board
+- Read alert notifications (read_alerts) - check what alternatives have been suggested
 
 IMPORTANT - TRANSACTION HISTORY:
-When users ask about their transaction history, purchases, or spending patterns, use the read_mock_transactions tool to access the mock credit card data. This provides realistic transaction history with 60 detailed purchases including merchant names, products, and amounts.
+When users ask about their purchases or spending, use the read_mock_transactions tool to access mock credit card data with 60 detailed purchases including merchant names, products, and amounts from January 2026.
 
-PRODUCT RECOMMENDATIONS & ALTERNATIVES:
-When users ask about alternatives to products they purchased, or want recommendations:
+PRODUCT ALTERNATIVES:
+When users ask about alternatives to products they purchased:
 1. First read their transaction history with read_mock_transactions
 2. Identify the specific product they're asking about
 3. Use search_product_alternatives with the product name and original price
-4. Provide detailed comparisons and savings opportunities
+4. Provide detailed comparisons emphasizing quality and savings
 Example: "Can you find a cheaper alternative to the Echo Dot I bought?" - read transactions, find the Echo Dot purchase ($49.99), then search for alternatives.
 
-TIPS FOR GREAT INTERACTIONS:
-- Proactively suggest relevant actions ("Want me to move some to savings?")
-- Explain the "why" behind suggestions
-- Celebrate financial wins ("Nice! Your savings earned $5 this month!")
-- Be encouraging about savings goals
-- Make finance feel less intimidating
+AUTOMATIC BACKGROUND ANALYSIS:
+The system runs continuously in the background:
+- Every 30 seconds, it checks one unchecked purchase from the past week
+- Uses AI to find cheaper alternatives while preserving quality
+- Posts recommendations like: "Google Nest Mini for $29 saves $20 - similar features, better voice recognition"
+- Only suggests alternatives that maintain or improve quality
+- Skips products where current choice is already optimal
 
-Remember: You're here to make banking delightful and help users build better financial habits!`
+TIPS FOR GREAT INTERACTIONS:
+- Focus on savings opportunities and value
+- Celebrate smart purchasing decisions
+- Explain why alternatives offer good value
+- Be encouraging about money-saving habits
+- Make smart shopping feel easy and rewarding
+
+Remember: You're here to help users save money without compromising on quality!`
 
 // ============================================================================
 // CUSTOM TOOL: SPENDING ANALYZER
@@ -1077,86 +1125,127 @@ func createReadAlertsTool() core.Tool {
 		Build()
 }
 
-// startAIAnalysisLoop runs a background loop that periodically prompts the AI
-// to analyze financial data and post insights to the alert board
+// startAIAnalysisLoop checks purchases from the past week for cheaper alternatives
+// and posts findings to the notice board
 func startAIAnalysisLoop(anthropicKey string) {
 	client := anthropic.NewClient(option.WithAPIKey(anthropicKey))
-
-	// Analysis prompts that rotate
-	prompts := []struct {
-		question string
-		alertType string
-	}{
-		{
-			question: "Analyze the recent spending patterns from the mock transaction data. Provide ONE specific insight in 15 words or less. Be actionable and direct. Format: Just the insight, no preamble.",
-			alertType: "info",
-		},
-		{
-			question: "Look at the mock transactions and identify ONE spending concern or warning in 15 words or less. Be specific about amounts or categories. Format: Just the concern, no preamble.",
-			alertType: "warning",
-		},
-		{
-			question: "Find ONE positive financial habit or achievement in the transaction history. State it in 15 words or less. Be encouraging. Format: Just the achievement, no preamble.",
-			alertType: "success",
-		},
-		{
-			question: "Suggest ONE specific money-saving opportunity based on the transactions. Maximum 15 words. Be concrete. Format: Just the suggestion, no preamble.",
-			alertType: "info",
-		},
-		{
-			question: "Identify ONE unusual or notable transaction pattern. Describe in 15 words or less. Format: Just the pattern, no preamble.",
-			alertType: "warning",
-		},
-	}
-
-	currentPromptIndex := 0
 
 	// Wait 10 seconds before first analysis
 	time.Sleep(10 * time.Second)
 
 	for {
-		// Get current prompt
-		prompt := prompts[currentPromptIndex]
+		// Read mock transactions
+		fileContent, err := os.ReadFile("mock_transactions.txt")
+		if err != nil {
+			log.Printf("❌ Failed to read transactions: %v", err)
+			time.Sleep(30 * time.Second)
+			continue
+		}
 
-		// Call Claude API to analyze
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		// Parse transactions
+		transactions := parseMockTransactions(string(fileContent))
 
-		systemPrompt := `You are a financial analysis AI that provides ultra-concise insights.
+		// Filter transactions from the past week (last 7 days)
+		weekAgo := time.Now().AddDate(0, 0, -7)
+		var recentTransactions []map[string]interface{}
+
+		for _, tx := range transactions {
+			dateStr, ok := tx["date"].(string)
+			if !ok {
+				continue
+			}
+
+			// Parse date (format: 2026-01-30)
+			txDate, err := time.Parse("2006-01-02", dateStr)
+			if err != nil {
+				continue
+			}
+
+			// Include if within past week
+			if txDate.After(weekAgo) {
+				recentTransactions = append(recentTransactions, tx)
+			}
+		}
+
+		if len(recentTransactions) == 0 {
+			log.Printf("ℹ️  No recent transactions to analyze")
+			time.Sleep(30 * time.Second)
+			continue
+		}
+
+		// Find a product that hasn't been checked yet
+		var productToCheck map[string]interface{}
+		checkedProductsMutex.Lock()
+		for _, tx := range recentTransactions {
+			product, _ := tx["product"].(string)
+			if product != "" && !checkedProducts[product] {
+				productToCheck = tx
+				checkedProducts[product] = true
+				break
+			}
+		}
+		checkedProductsMutex.Unlock()
+
+		if productToCheck == nil {
+			// All products checked, reset the map and start over
+			checkedProductsMutex.Lock()
+			checkedProducts = make(map[string]bool)
+			checkedProductsMutex.Unlock()
+			log.Printf("✅ All recent purchases checked for alternatives, resetting...")
+			time.Sleep(60 * time.Second)
+			continue
+		}
+
+		// Extract product details
+		product, _ := productToCheck["product"].(string)
+		amount, _ := productToCheck["amount"].(string)
+		merchant, _ := productToCheck["merchant"].(string)
+		date, _ := productToCheck["date"].(string)
+
+		log.Printf("🔍 Checking for cheaper alternatives: %s ($%s)", product, amount)
+
+		// Use Claude AI to find cheaper alternatives while preserving quality
+		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+
+		prompt := fmt.Sprintf(`You are analyzing a purchase to find cheaper alternatives while preserving quality.
+
+PURCHASE DETAILS:
+- Product: %s
+- Price Paid: %s
+- Merchant: %s
+- Date: %s
+
+TASK:
+Find a cheaper alternative that maintains or improves quality. You MUST save at least $5.00 to recommend an alternative.
+
+FORMAT YOUR RESPONSE EXACTLY LIKE THIS (no preamble):
+"[Original Product] ($[original price]) - Alternative: [New Product] ($[new price]) - Save: $[difference] - Buy: [URL]"
+
+EXAMPLES:
+- "Echo Dot 5th Gen ($49.99) - Alternative: Google Nest Mini ($29.99) - Save: $20.00 - Buy: https://store.google.com/product/google_nest_mini"
+- "Nike Air Max ($139.99) - Alternative: Adidas Ultraboost ($120.00) - Save: $19.99 - Buy: https://www.adidas.com/us/ultraboost"
+- "Whole Foods Groceries ($127.83) - Alternative: Trader Joe's Organic Mix ($95.00) - Save: $32.83 - Buy: https://www.traderjoes.com"
 
 CRITICAL RULES:
-- Maximum 15 words per response
-- No preambles, introductions, or explanations
-- Start directly with the insight
-- Be specific with numbers and categories
-- Make it actionable
-
-MOCK TRANSACTION DATA CONTEXT:
-You have access to mock credit card transaction data with purchases from various merchants including groceries, restaurants, entertainment, utilities, and other categories. Use this data to provide specific, relevant insights.
-
-Example good responses:
-- "Coffee shop spending up 40% this month - $156 at Starbucks"
-- "Saved $200 more than last month - great progress!"
-- "Consider cheaper streaming alternatives - spending $89/month on subscriptions"
-- "Unusual $450 charge at electronics store yesterday"
-
-Example bad responses:
-- "Based on my analysis of your transactions, I've noticed that..." (too long)
-- "You're doing well!" (too vague)
-- "I recommend looking into your spending." (not specific)`
-
-		fullPrompt := systemPrompt + "\n\n" + prompt.question
+- MUST save at least $5.00 or respond: "Not enough savings (under $5)"
+- MUST include a real, working purchase link (Amazon, official store, major retailer)
+- Use exact format with " - " separators (no vertical pipes)
+- Show all prices with $ and two decimal places
+- Alternative must maintain or improve quality
+- URL should be direct product page when possible
+- Focus on 2026 realistic pricing and real retailers`, product, amount, merchant, date)
 
 		resp, err := client.Messages.New(ctx, anthropic.MessageNewParams{
 			Model:     anthropic.Model("claude-sonnet-4-20250514"),
-			MaxTokens: 100, // Keep responses short
+			MaxTokens: 200, // Increased to accommodate URLs
 			Messages: []anthropic.MessageParam{
-				anthropic.NewUserMessage(anthropic.NewTextBlock(fullPrompt)),
+				anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)),
 			},
 		})
 		cancel()
 
 		if err != nil {
-			log.Printf("❌ AI analysis loop error: %v", err)
+			log.Printf("❌ AI analysis error: %v", err)
 		} else {
 			// Extract response text
 			var responseText strings.Builder
@@ -1166,16 +1255,49 @@ Example bad responses:
 				}
 			}
 
-			insight := strings.TrimSpace(responseText.String())
+			recommendation := strings.TrimSpace(responseText.String())
 
-			// Only post if we got a response
-			if insight != "" {
+			// Check if recommendation is valid and meets minimum savings
+			shouldPost := false
+			if recommendation != "" {
+				recLower := strings.ToLower(recommendation)
+
+				// Skip if response indicates no alternative or insufficient savings
+				if strings.Contains(recLower, "optimal") ||
+				   strings.Contains(recLower, "not enough savings") ||
+				   strings.Contains(recLower, "under $5") {
+					log.Printf("✓ No better alternative for: %s (insufficient savings or optimal)", product)
+				} else if strings.Contains(recommendation, "Save: $") {
+					// Extract savings amount from "Save: $X.XX"
+					saveIdx := strings.Index(recommendation, "Save: $")
+					if saveIdx != -1 {
+						saveStr := recommendation[saveIdx+7:] // Skip "Save: $"
+						// Find the end of the number (space or dash)
+						endIdx := strings.IndexAny(saveStr, " -")
+						if endIdx != -1 {
+							saveStr = saveStr[:endIdx]
+						}
+
+						// Parse savings amount
+						var savings float64
+						if _, err := fmt.Sscanf(saveStr, "%f", &savings); err == nil {
+							if savings >= 5.0 {
+								shouldPost = true
+							} else {
+								log.Printf("✓ Savings too low for %s: $%.2f (minimum $5.00)", product, savings)
+							}
+						}
+					}
+				}
+			}
+
+			if shouldPost {
 				// Create and store alert
 				alert := Alert{
-					ID:        fmt.Sprintf("auto-%d", time.Now().UnixNano()),
-					Message:   insight,
+					ID:        fmt.Sprintf("alt-%d", time.Now().UnixNano()),
+					Message:   recommendation,
 					Timestamp: time.Now(),
-					Type:      prompt.alertType,
+					Type:      "success", // All valid alternatives are success
 				}
 
 				alertsMutex.Lock()
@@ -1185,14 +1307,11 @@ Example bad responses:
 				}
 				alertsMutex.Unlock()
 
-				log.Printf("🤖 Auto-posted [%s]: %s", prompt.alertType, insight)
+				log.Printf("💡 Posted alternative: %s", recommendation)
 			}
 		}
 
-		// Move to next prompt
-		currentPromptIndex = (currentPromptIndex + 1) % len(prompts)
-
-		// Wait 30 seconds before next analysis
+		// Wait 30 seconds before checking next product
 		time.Sleep(30 * time.Second)
 	}
 }

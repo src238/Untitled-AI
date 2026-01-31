@@ -167,6 +167,23 @@ body {
   display: block;
 }
 
+.alert-link {
+  color: var(--orange);
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  word-break: break-all;
+}
+
+.alert-link:hover {
+  color: var(--brown);
+  text-decoration: none;
+}
+
+.alert-link:visited {
+  color: var(--brown);
+}
+
 /* Center - Main Content */
 .main-content {
   background: var(--cream);
@@ -275,6 +292,8 @@ body {
   border: 1px solid var(--light-border);
   border-radius: 12px;
   overflow: hidden;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .transaction-item {
