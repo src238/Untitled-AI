@@ -251,24 +251,24 @@ body {
   letter-spacing: -0.01em;
 }
 
-.action-send {
+.action-btn.active {
   background: var(--black);
   color: var(--white);
 }
 
-.action-send:hover {
+.action-btn.active:hover {
   background: var(--brown);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow);
 }
 
-.action-receive {
+.action-btn.inactive{
   background: var(--white);
   color: var(--black);
   border: 1px solid var(--light-border);
 }
 
-.action-receive:hover {
+.action-btn.inactive:hover {
   background: var(--cream);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow);
