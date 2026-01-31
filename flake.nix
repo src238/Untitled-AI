@@ -9,11 +9,16 @@
     system = "x86_64-linux";
   in {
       devShells."${system}".default = let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs { 
+	inherit system; 
+	config.allowUnfree = true;
+	};
       in pkgs.mkShell {
         packages = with pkgs; [
 	  nodejs_24
 	  go
+	  vite
+	  claude-code
 	];
       };
     };
