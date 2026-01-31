@@ -1,3 +1,4 @@
+# Liminal Sales Finder AI Agent
 ## What software are we creating?
 We are creating and designing a Sales Finder AI Agent to search through the history of previous purchases made by a Liminal account holder to determine if there exists a cheaper alternative purchase for them. The agent will determine the most logical product for that transaction type for the user and offers recommendations to help them to make the best choice they can on their purchases and investments. We will split the workload of the program into 4 sections: a receipt reader to retrieve information on previous purchases, a competitor finder to determine similar products produced by other companies, then a product comparator to determine the user of potential benefits this product would have over the found products, then sends the information to another AI that prints this information to Liminal's chat system in an easy and readable interface.
 ## What is the aim of our project?
