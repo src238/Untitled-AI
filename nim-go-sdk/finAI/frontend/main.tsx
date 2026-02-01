@@ -253,6 +253,12 @@ function App() {
 
       {/* Center - Balance & Transactions */}
       <main className="main-content">
+        <div className="balance-info">
+            <span className="balance-label">Current Balance</span>
+            <h1 className="balance-amount">
+              ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h1>
+          </div>
         <div className="mode-buttons">
           <button
             className={`action-btn ${currentMode === 'recent-transactions' ? 'active' : 'inactive'}`}
