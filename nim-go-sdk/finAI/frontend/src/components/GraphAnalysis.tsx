@@ -212,20 +212,12 @@ export default function GraphAnalysis() {
 
 
   return (
-<<<<<<< HEAD
     <div style={{ padding: '40px', backgroundColor: '#f4f3f2', overflow: 'hidden' }}>
       {enlargedGraph && <BlurBack />}
 
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-=======
-    <div style={{ padding: '40px', backgroundColor: '#f4f3f2', 'overflow': 'hidden', maxHeight:'73vh' }}>
-      
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
->>>>>>> 751f30bd2cbcce0060cc1fc6a94116e1df6bc157
         gap: '24px',
         maxWidth: '1200px',
         margin: '0 auto'
