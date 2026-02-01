@@ -116,8 +116,6 @@ body {
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  display: flex;
-  gap: 0.75rem;
   transition: all 0.2s ease;
   animation: slideIn 0.3s ease;
 }
@@ -144,14 +142,8 @@ body {
   border-left: 3px solid var(--beige);
 }
 
-.alert-icon {
-  font-size: 1.25rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
 .alert-content {
-  flex: 1;
+  width: 100%;
 }
 
 .alert-message {
@@ -251,24 +243,24 @@ body {
   letter-spacing: -0.01em;
 }
 
-.action-send {
+.action-btn.active {
   background: var(--black);
   color: var(--white);
 }
 
-.action-send:hover {
+.action-btn.active:hover {
   background: var(--brown);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow);
 }
 
-.action-receive {
+.action-btn.inactive{
   background: var(--white);
   color: var(--black);
   border: 1px solid var(--light-border);
 }
 
-.action-receive:hover {
+.action-btn.inactive:hover {
   background: var(--cream);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow);

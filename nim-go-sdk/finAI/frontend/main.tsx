@@ -25,12 +25,15 @@ interface Message {
   content: string
 }
 
+type FilterType = 'all' | 'send' | 'receive'
+
 function App() {
   const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws'
   const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
   const [balance, setBalance] = useState<number>(2547.83)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [alerts, setAlerts] = useState<Alert[]>([])
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Hello! I\'m your AI financial assistant. How can I help you today?' }
@@ -72,7 +75,6 @@ function App() {
         const response = await fetch(`${apiBaseUrl}/api/alerts`)
         if (response.ok) {
           const data = await response.json()
-          // Map API response to Alert format
           const mappedAlerts = data.map((alert: any) => ({
             id: alert.id,
             message: alert.message,
@@ -85,7 +87,6 @@ function App() {
             }),
             type: alert.type
           }))
-          // Reverse to show newest alerts at the top
           setAlerts(mappedAlerts.reverse())
         }
       } catch (error) {
@@ -93,12 +94,8 @@ function App() {
       }
     }
 
-    // Initial fetch
     fetchAlerts()
-
-    // Poll every 5 seconds
     const interval = setInterval(fetchAlerts, 5000)
-
     return () => clearInterval(interval)
   }, [apiBaseUrl])
 
@@ -109,14 +106,41 @@ function App() {
     ws.onopen = () => {
       setIsConnected(true)
       console.log('Connected to AI assistant')
+      // Initialize conversation with the nim-go-sdk server
+      ws.send(JSON.stringify({
+        type: 'new_conversation',
+        user: 'user'
+      }))
     }
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
 
-        if (data.type === 'message' && data.content) {
-          setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
+        if (data.type === 'text' && data.content) {
+          // Check if we already have this message from streaming chunks
+          setMessages(prev => {
+            const lastMsg = prev[prev.length - 1]
+            // If last message is from assistant and matches this content, skip (already streamed)
+            if (lastMsg && lastMsg.role === 'assistant' && lastMsg.content === data.content) {
+              return prev
+            }
+            // Otherwise add it as a new message
+            return [...prev, { role: 'assistant', content: data.content }]
+          })
+        } else if (data.type === 'text_chunk' && data.content) {
+          // Handle streaming text chunks
+          setMessages(prev => {
+            const newMessages = [...prev]
+            if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
+              // Append to last assistant message
+              newMessages[newMessages.length - 1].content += data.content
+            } else {
+              // Create new assistant message
+              newMessages.push({ role: 'assistant', content: data.content })
+            }
+            return newMessages
+          })
         } else if (data.type === 'alert') {
           const newAlert: Alert = {
             id: Date.now().toString(),
@@ -171,7 +195,13 @@ function App() {
     setInputValue('')
   }
 
-  // Helper function to render alert message with clickable links
+  // Derived filtered list based on active filter
+  const filteredTransactions = transactions.filter(tx => {
+    if (activeFilter === 'receive') return tx.type === 'credit'
+    if (activeFilter === 'send') return tx.type === 'debit'
+    return true // 'all'
+  })
+
   const renderAlertMessage = (message: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g
     const parts = message.split(urlRegex)
@@ -210,11 +240,6 @@ function App() {
           ) : (
             alerts.map(alert => (
               <div key={alert.id} className={`alert-card alert-${alert.type}`}>
-                <div className="alert-icon">
-                  {alert.type === 'warning' && '⚠'}
-                  {alert.type === 'success' && '✓'}
-                  {alert.type === 'info' && 'ℹ'}
-                </div>
                 <div className="alert-content">
                   <p className="alert-message">{renderAlertMessage(alert.message)}</p>
                   <time className="alert-time">{alert.timestamp}</time>
@@ -235,28 +260,48 @@ function App() {
             </h1>
           </div>
           <div className="balance-actions">
-            <button className="action-btn action-send">Send</button>
-            <button className="action-btn action-receive">Receive</button>
+            <button
+              className={`action-btn action-all ${activeFilter === 'all' ? 'active' : 'inactive'}`}
+              onClick={() => setActiveFilter('all')}
+            >
+              All
+            </button>
+            <button
+              className={`action-btn action-send ${activeFilter === 'send' ? 'active' : 'inactive'}`}
+              onClick={() => setActiveFilter('send')}
+            >
+              Send
+            </button>
+            <button
+              className={`action-btn action-receive ${activeFilter === 'receive' ? 'active' : 'inactive'}`}
+              onClick={() => setActiveFilter('receive')}
+            >
+              Receive
+            </button>
           </div>
         </header>
 
         <section className="transactions-section">
           <h3 className="section-title">Recent Transactions</h3>
           <div className="transactions-list">
-            {transactions.map(tx => (
-              <div key={tx.id} className="transaction-item">
-                <div className="transaction-icon">
-                  {tx.type === 'credit' ? '↑' : '↓'}
+            {filteredTransactions.length === 0 ? (
+              <p className="empty-transactions">No {activeFilter !== 'all' ? activeFilter : ''} transactions yet.</p>
+            ) : (
+              filteredTransactions.map(tx => (
+                <div key={tx.id} className="transaction-item">
+                  <div className="transaction-icon">
+                    {tx.type === 'credit' ? '↑' : '↓'}
+                  </div>
+                  <div className="transaction-details">
+                    <span className="transaction-description">{tx.description}</span>
+                    <span className="transaction-date">{tx.date}</span>
+                  </div>
+                  <span className={`transaction-amount ${tx.type === 'credit' ? 'credit' : 'debit'}`}>
+                    {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
+                  </span>
                 </div>
-                <div className="transaction-details">
-                  <span className="transaction-description">{tx.description}</span>
-                  <span className="transaction-date">{tx.date}</span>
-                </div>
-                <span className={`transaction-amount ${tx.type === 'credit' ? 'credit' : 'debit'}`}>
-                  {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
-                </span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </main>
