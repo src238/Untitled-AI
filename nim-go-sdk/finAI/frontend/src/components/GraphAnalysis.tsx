@@ -145,7 +145,7 @@ export default function GraphAnalysis() {
 
 
   return (
-    <div style={{ padding: '40px', backgroundColor: '#f4f3f2', 'overflow': 'hidden' }}>
+    <div style={{ padding: '40px', backgroundColor: '#f4f3f2', 'overflow': 'hidden', maxHeight:'73vh' }}>
       
       <div style={{ 
         display: 'grid', 
