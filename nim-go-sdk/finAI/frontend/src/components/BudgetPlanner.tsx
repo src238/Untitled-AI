@@ -95,7 +95,7 @@ export default function BudgetPlanner({ balance }: BudgetPlannerProps) {
   return (
     <>
       <header className="balance-header">
-        <h3 className="section-title">Budget Planner</h3>
+        <h3 className="section-title">Savings Planner</h3>
       </header>
 
       <section className="transactions-section">

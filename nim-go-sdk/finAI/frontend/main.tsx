@@ -320,7 +320,7 @@ const alertCounts = {
             className={`action-btn ${currentMode === 'budget-planner' ? 'active' : 'inactive'}`}
             onClick={() => setCurrentMode('budget-planner')}
           >
-            Budget Planner
+            Savings Planner
           </button>
         </div>
         {currentMode === 'recent-transactions' && (
