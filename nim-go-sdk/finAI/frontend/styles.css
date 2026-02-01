@@ -261,6 +261,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  border: black;
+  border-width: 0rem;
+  border-style: solid;
+  background: var(--white);
+  border-bottom: none;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
 }
 
 .balance-info {
@@ -295,27 +302,20 @@ body {
 .balance-actions {
   display: flex;
   gap: 0.75rem;
-  margin-top: 1rem;
-  border: black;
-  border-width: 0.1rem;
-  border-style: solid;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
-  border-bottom: none;
-  background: var(--orange);
+  margin-top: 0rem;
 }
 
 .action-btn {
-font-family: 'ABC Marist', sans-serif;
+font-family: "ABC Marist", sans-serif;
 font-weight: 500;
 font-size: 1.2rem;
-padding: 0.5rem 0.5rem;
-border: none;
+padding: 0.5rem;
+border: medium;
 border-radius: 8px;
 cursor: pointer;
-transition: all 0.2s ease;
+transition: 0.2s;
 letter-spacing: -0.01em;
-margin: 0.25rem;
+margin: 1.5rem 0.25rem 0.5rem;
 }
 
 .action-btn.active {
@@ -347,23 +347,26 @@ margin: 0.25rem;
 
 .section-title {
   font-family: 'ABC Marist', sans-serif;
-font-weight: 500;
-font-size: 2rem;
-letter-spacing: -0.01em;
-margin-top: 1.5rem;
-color: var(--black);
+  font-weight: 500;
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+  margin-top: 1.5rem;
+  margin-left: 1rem;
+  color: var(--black);
 }
 
 .transactions-list {
-  background: var(--white);
-  overflow: hidden;
-  max-height: 500px;
-  overflow-y: auto;
-  border: black;
-  border-style: solid;
-  border-radius: 8px;
-  border-width: 0.1rem;
-  border-top-right-radius: 0px;
+background: var(--white);
+overflow: hidden;
+max-height: 500px;
+overflow-y: auto;
+border: black;
+border-style: solid;
+border-radius: 8px;
+border-width: 0rem;
+border-top: none;
+border-top-left-radius: 0px;
+border-top-right-radius: 0px;
 }
 
 .transaction-item {
