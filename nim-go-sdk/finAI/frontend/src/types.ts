@@ -4,7 +4,7 @@ export interface Transaction {
   amount: number
   description: string
   date: string
-  type: 'debit' | 'credit'
+  isIncoming: boolean
   merchant?: string
 }
 

@@ -9,7 +9,7 @@ interface Transaction {
   amount: number
   description: string
   date: string
-  type: 'debit' | 'credit'
+  isIncoming: boolean
   merchant?: string
 }
 
@@ -197,8 +197,8 @@ function App() {
 
   // Derived filtered list based on active filter
   const filteredTransactions = transactions.filter(tx => {
-    if (activeFilter === 'receive') return tx.type === 'credit'
-    if (activeFilter === 'send') return tx.type === 'debit'
+    if (activeFilter === 'receive') return tx.isIncoming
+    if (activeFilter === 'send') return !tx.isIncoming
     return true // 'all'
   })
 
@@ -290,14 +290,14 @@ function App() {
               filteredTransactions.map(tx => (
                 <div key={tx.id} className="transaction-item">
                   <div className="transaction-icon">
-                    {tx.type === 'credit' ? '↑' : '↓'}
+                    {tx.isIncoming ? '↓' : '↑'}
                   </div>
                   <div className="transaction-details">
                     <span className="transaction-description">{tx.description}</span>
                     <span className="transaction-date">{tx.date}</span>
                   </div>
-                  <span className={`transaction-amount ${tx.type === 'credit' ? 'credit' : 'debit'}`}>
-                    {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
+                  <span className={`transaction-amount ${tx.isIncoming ? 'incoming' : 'outgoing'}`}>
+                    {tx.isIncoming ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
                   </span>
                 </div>
               ))

@@ -19,10 +19,11 @@ func readMockTransactions() ([]Transaction, error) {
 	transactions := make([]Transaction, len(rawTransactions))
 	for i, raw := range rawTransactions {
 		transactions[i] = Transaction{
-			Date:     raw["date"].(string),
-			Merchant: raw["merchant"].(string),
-			Product:  raw["product"].(string),
-			Amount:   raw["amount"].(string),
+			Date:       raw["date"].(string),
+			Merchant:   raw["merchant"].(string),
+			Product:    raw["product"].(string),
+			Amount:     raw["amount"].(string),
+			IsIncoming: raw["incoming"].(bool), //True if "T", else False
 		}
 	}
 	return transactions, nil
@@ -62,6 +63,7 @@ func parseMockTransactionsRaw(content string) []map[string]interface{} {
 					"merchant": tx.Merchant,
 					"product":  tx.Product,
 					"amount":   tx.Amount,
+					"incoming": tx.IsIncoming,
 				})
 			}
 		}
@@ -84,7 +86,7 @@ func isHeaderLine(line string) bool {
 // parseTransactionLine parses a single transaction line
 func parseTransactionLine(line string) *Transaction {
 	parts := strings.Split(line, "|")
-	if len(parts) != 4 {
+	if len(parts) != 5 {
 		return nil
 	}
 
@@ -92,6 +94,7 @@ func parseTransactionLine(line string) *Transaction {
 	merchant := strings.TrimSpace(parts[1])
 	product := strings.TrimSpace(parts[2])
 	amount := strings.TrimSpace(parts[3])
+	isIncoming := strings.TrimSpace(parts[4])
 
 	// Skip if this looks like a header
 	if date == "" || date == "DATE" || merchant == "" {
@@ -99,10 +102,11 @@ func parseTransactionLine(line string) *Transaction {
 	}
 
 	return &Transaction{
-		Date:     date,
-		Merchant: merchant,
-		Product:  product,
-		Amount:   amount,
+		Date:       date,
+		Merchant:   merchant,
+		Product:    product,
+		Amount:     amount,
+		IsIncoming: isIncoming == "T",
 	}
 }
 
