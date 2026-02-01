@@ -13,6 +13,7 @@ import (
 func setupHTTPHandlers() {
 	http.HandleFunc("/api/alerts", handleAlerts)
 	http.HandleFunc("/api/transactions", handleTransactions)
+	http.HandleFunc("/api/recurring-payments", handleRecurringPayments)
 }
 
 // handleAlerts returns recent alerts from the last 24 hours
@@ -81,6 +82,30 @@ func handleTransactions(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to encode transactions", http.StatusInternalServerError)
 		return
 	}
+}
+
+// handles and predicts recurring payments
+func handleRecurringPayments(w http.ResponseWriter, r *http.Request) {
+	// Enable CORS - restrictive origin for production
+	origin := r.Header.Get("Origin")
+	if origin == "" || origin == "http://localhost:5173" || origin == "http://localhost:5174" || origin == "http://localhost:8080" {
+		if origin == "" {
+			origin = "http://localhost:5173"
+		}
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+	}
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Max-Age", "3600")
+	w.Header().Set("Content-Type", "application/json")
+
+	if !isRecurringDetected() {
+		w.WriteHeader(http.StatusAccepted) // 202 - tells frontend to poll again
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(getRecurringPayments())
 }
 
 // filterRecentAlerts returns alerts from the last N hours

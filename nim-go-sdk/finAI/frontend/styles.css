@@ -569,3 +569,109 @@ body {
     gap: 1.5rem;
   }
 }
+
+
+/* === ADD THESE TO THE BOTTOM OF YOUR styles.css === */
+
+/* Recurring Payments */
+.recurring-count-badge {
+  font-family: 'ABC Marist', sans-serif;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  color: var(--white);
+  background: var(--black);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  letter-spacing: -0.01em;
+}
+
+.recurring-main-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.recurring-freq-badge {
+  font-family: 'ABC Marist', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.freq-monthly {
+  background: rgba(155, 193, 243, 0.2);
+  color: #4a90d9;
+}
+
+.freq-weekly {
+  background: rgba(255, 109, 0, 0.12);
+  color: var(--orange);
+}
+
+.freq-bi-weekly {
+  background: rgba(255, 109, 0, 0.08);
+  color: #c45600;
+}
+
+.freq-annual {
+  background: rgba(158, 140, 120, 0.15);
+  color: var(--beige);
+}
+
+.freq-irregular {
+  background: rgba(158, 140, 120, 0.1);
+  color: var(--beige);
+}
+
+.recurring-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+}
+
+.recurring-sub-text {
+  font-size: 0.6875rem;
+  color: var(--beige);
+}
+
+.recurring-sub-divider {
+  font-size: 0.6rem;
+  color: var(--beige);
+  opacity: 0.5;
+}
+
+/* Recurring loading / error states */
+.recurring-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 4rem 2rem;
+  color: var(--beige);
+  font-size: 0.875rem;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--light-border);
+  border-top: 2px solid var(--black);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.recurring-error {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--orange);
+  font-size: 0.875rem;
+}

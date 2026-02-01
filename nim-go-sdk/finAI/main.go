@@ -72,6 +72,9 @@ func main() {
 	go startAIAnalysisLoop(cfg.AnthropicKey)
 	log.Println("✅ Started AI background analysis loop (runs every 30 seconds)")
 
+	// For detecting recurring payments given transactions
+	go detectRecurringPayments(cfg.AnthropicKey)
+
 	// Setup HTTP endpoints
 	setupHTTPHandlers()
 
