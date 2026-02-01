@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
+//Mode Components:
+import RecentTransactions from './src/components/RecentTransactions'
+import RecurringPayments from './src/components/RecurringPayments'
+import GraphAnalysis from './src/components/GraphAnalysis'
+import BudgetPlanner from './src/components/BudgetPlanner'
+
 import '@liminalcash/nim-chat/styles.css'
+
 import './styles.css'
 
 interface Transaction {
@@ -25,7 +32,6 @@ interface Message {
   content: string
 }
 
-type FilterType = 'all' | 'send' | 'receive'
 
 function App() {
   const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws'
@@ -33,7 +39,8 @@ function App() {
   const [balance, setBalance] = useState<number>(2547.83)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [alerts, setAlerts] = useState<Alert[]>([])
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all')
+
+  const [currentMode, setCurrentMode] = useState('recent-transactions') //either 'recent-transactions', 'graph-analysis', 'recurring-payments' or 'budget-planner'
 
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Hello! I\'m your AI financial assistant. How can I help you today?' }
@@ -195,13 +202,6 @@ function App() {
     setInputValue('')
   }
 
-  // Derived filtered list based on active filter
-  const filteredTransactions = transactions.filter(tx => {
-    if (activeFilter === 'receive') return tx.isIncoming
-    if (activeFilter === 'send') return !tx.isIncoming
-    return true // 'all'
-  })
-
   const renderAlertMessage = (message: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g
     const parts = message.split(urlRegex)
@@ -250,60 +250,47 @@ function App() {
         </div>
       </aside>
 
+
       {/* Center - Balance & Transactions */}
       <main className="main-content">
-        <header className="balance-header">
-          <div className="balance-info">
-            <span className="balance-label">Current Balance</span>
-            <h1 className="balance-amount">
-              ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </h1>
-          </div>
-          <div className="balance-actions">
-            <button
-              className={`action-btn action-all ${activeFilter === 'all' ? 'active' : 'inactive'}`}
-              onClick={() => setActiveFilter('all')}
-            >
-              All
-            </button>
-            <button
-              className={`action-btn action-send ${activeFilter === 'send' ? 'active' : 'inactive'}`}
-              onClick={() => setActiveFilter('send')}
-            >
-              Send
-            </button>
-            <button
-              className={`action-btn action-receive ${activeFilter === 'receive' ? 'active' : 'inactive'}`}
-              onClick={() => setActiveFilter('receive')}
-            >
-              Receive
-            </button>
-          </div>
-        </header>
-
-        <section className="transactions-section">
-          <h3 className="section-title">Recent Transactions</h3>
-          <div className="transactions-list">
-            {filteredTransactions.length === 0 ? (
-              <p className="empty-transactions">No {activeFilter !== 'all' ? activeFilter : ''} transactions yet.</p>
-            ) : (
-              filteredTransactions.map(tx => (
-                <div key={tx.id} className="transaction-item">
-                  <div className="transaction-icon">
-                    {tx.isIncoming ? '↓' : '↑'}
-                  </div>
-                  <div className="transaction-details">
-                    <span className="transaction-description">{tx.description}</span>
-                    <span className="transaction-date">{tx.date}</span>
-                  </div>
-                  <span className={`transaction-amount ${tx.isIncoming ? 'incoming' : 'outgoing'}`}>
-                    {tx.isIncoming ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
+        <div className="mode-buttons">
+          <button
+            className={`action-btn ${currentMode === 'recent-transactions' ? 'active' : 'inactive'}`}
+            onClick={() => setCurrentMode('recent-transactions')}
+          >
+            Recent Transactions
+          </button>
+          <button
+            className={`action-btn ${currentMode === 'graph-analysis' ? 'active' : 'inactive'}`}
+            onClick={() => setCurrentMode('graph-analysis')}
+          >
+            Graph Analysis
+          </button>
+          <button
+            className={`action-btn ${currentMode === 'recurring-payments' ? 'active' : 'inactive'}`}
+            onClick={() => setCurrentMode('recurring-payments')}
+          >
+            Recurring Payments
+          </button>
+          <button
+            className={`action-btn ${currentMode === 'budget-planner' ? 'active' : 'inactive'}`}
+            onClick={() => setCurrentMode('budget-planner')}
+          >
+            Budget Planner
+          </button>
+        </div>
+        {currentMode === 'recent-transactions' && (
+          <RecentTransactions transactions={transactions} balance={balance} />
+        )}
+        {currentMode === 'graph-analysis' && (
+          <GraphAnalysis transactions={transactions} balance={balance} />
+        )}
+        {currentMode === 'recurring-payments' && (
+          <RecurringPayments transactions={transactions} balance={balance} />
+        )}
+        {currentMode === 'budget-planner' && (
+          <BudgetPlanner transactions={transactions} balance={balance} />
+        )}
       </main>
 
       {/* Right Sidebar - Chat */}
