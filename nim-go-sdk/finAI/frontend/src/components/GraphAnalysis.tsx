@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -30,6 +30,8 @@ ChartJS.register(
 
 export default function GraphAnalysis() {
   const days = Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`);
+  const [enlargedGraph, setEnlargedGraph] = useState<string | null>(null);
+
 
   // --- 1. Monthly Spending Bar Chart Data ---
   const barData = {
@@ -43,16 +45,81 @@ export default function GraphAnalysis() {
   };
 
 
+  function BlurBack() {
+    return (
+      <div onClick={() => setEnlargedGraph(null)} style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        backdropFilter: 'blur(2px)',
+        WebkitBackdropFilter: 'blur(2px)', // Safari
+        pointerEvents: 'all',
+      }}
+      />
+    )
+  }
+
+  function EnlargeButton({ graphId }: { graphId: string }) {
+    return (
+      <button
+        onClick={() => setEnlargedGraph(graphId)}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          background: '#cdcdcdff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          cursor: 'pointer',
+          fontSize: '14px',
+          fontWeight: '500',
+          zIndex: 10,
+          transition: 'all 0.2s ease',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.05)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+        }}
+      >
+        ⤢
+      </button>
+    );
+  }
+
   const cardStyle: React.CSSProperties = {
-  background: '#ffffff',
-  padding: '24px',
-  borderRadius: '16px',
-  boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08)',
-  height: '33vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}
+    background: '#ffffff',
+    padding: '24px',
+    borderRadius: '16px',
+    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08)',
+    height: '33vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  }
+
+  const enlargedCardStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '80vw',
+    height: '80vh',
+    background: '#ffffff',
+    padding: '40px',
+    borderRadius: '20px',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+    zIndex: 10000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 
   // --- 2. Category Doughnut Chart Data ---
   const doughnutData = {
@@ -103,17 +170,17 @@ export default function GraphAnalysis() {
       {
         label: 'User Spending',
         data: spendingTrend,
-        borderColor: (context: any) => {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) return '#28a745';
-          // Simplified logic: Budget color thresholding
-          const val = context.raw;
-          if (val < budgetValue * 0.8) return "#28a745";
-          if (val <= budgetValue) return "#FF8C00";
-          return "#dc3545";
+        // The 'segment' property is the key to restoring the gradient effect
+        segment: {
+          borderColor: (ctx: any) => {
+            const val = (ctx.p0.parsed.y + ctx.p1.parsed.y) / 2;
+            if (val < budgetValue * 0.8) return "#28a745"; // Green
+            if (val <= budgetValue) return "#FF8C00";      // Orange
+            return "#dc3545";                             // Red
+          },
         },
         borderWidth: 3,
+        tension: 0.4,
         pointRadius: 0,
       },
       {
@@ -128,7 +195,7 @@ export default function GraphAnalysis() {
 
   const commonOptions = {
     responsive: true,
-  maintainAspectRatio: false,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top' as const },
     },
@@ -141,55 +208,176 @@ export default function GraphAnalysis() {
       legend: { position: 'top' as const },
     },
     cutout: '68%',
-};
+  };
 
 
   return (
-    <div style={{ padding: '40px', backgroundColor: '#f4f3f2', 'overflow': 'hidden' }}>
-      
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+    <div style={{ padding: '40px', backgroundColor: '#f4f3f2', overflow: 'hidden' }}>
+      {enlargedGraph && <BlurBack />}
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
         gap: '24px',
         maxWidth: '1200px',
         margin: '0 auto'
       }}>
-        
+
         {/* Monthly Spending Bar Chart */}
         <div style={cardStyle}>
-          <Bar 
-            data={barData} 
-            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Monthly Spending Overview' }}}} 
+          <EnlargeButton graphId="monthly" />
+          <Bar
+            data={barData}
+            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Monthly Spending Overview' } } }}
           />
         </div>
 
         {/* Category Doughnut Chart */}
         <div style={cardStyle}>
+          <EnlargeButton graphId="category" />
           <div style={{ width: '80%', margin: '0 auto', height: '30vh' }}>
-            <Doughnut 
-              data={doughnutData} 
-              options={{ ...doughnutOptions, cutout: '68%', plugins: { ...doughnutOptions.plugins, title: { display: true, text: 'Spending by Category' }}}} 
+            <Doughnut
+              data={doughnutData}
+              options={{ ...doughnutOptions, cutout: '68%', plugins: { ...doughnutOptions.plugins, title: { display: true, text: 'Spending by Category' } } }}
             />
           </div>
         </div>
 
         {/* Daily Average Line Chart */}
         <div style={cardStyle}>
-          <Line 
-            data={dailyAvgData} 
-            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Average Daily Spending' }}}} 
+          <EnlargeButton graphId="daily" />
+          <Line
+            data={dailyAvgData}
+            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Average Daily Spending' } } }}
           />
         </div>
 
         {/* Budget vs Spending Line Chart */}
         <div style={cardStyle}>
-          <Line style={{ height: '10vh'}}
-            data={budgetData} 
-            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Spending vs Budget' }}}} 
+          <EnlargeButton graphId="budget" />
+          <Line
+            data={budgetData}
+            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Spending vs Budget' } } }}
           />
         </div>
 
       </div>
+
+      {/* Enlarged Graph Overlays */}
+      {enlargedGraph === 'monthly' && (
+        <div style={enlargedCardStyle}>
+          <button
+            onClick={() => setEnlargedGraph(null)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: '#cdcdcdff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 16px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '600',
+              zIndex: 10001,
+            }}
+          >
+            ✕
+          </button>
+          <Bar
+            data={barData}
+            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Monthly Spending Overview', font: { size: 20 } } } }}
+          />
+        </div>
+      )}
+
+      {enlargedGraph === 'category' && (
+        <div style={enlargedCardStyle}>
+          <button
+            onClick={() => setEnlargedGraph(null)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: '#cdcdcdff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 16px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '600',
+              zIndex: 10001,
+            }}
+          >
+            ✕
+          </button>
+          <div style={{ width: '60%', height: '70vh', margin: '0 auto' }}>
+            <Doughnut
+              data={doughnutData}
+              options={{ ...doughnutOptions, plugins: { ...doughnutOptions.plugins, title: { display: true, text: 'Spending by Category', font: { size: 20 } } } }}
+            />
+          </div>
+        </div>
+      )}
+
+      {enlargedGraph === 'daily' && (
+        <div style={enlargedCardStyle}>
+          <button
+            onClick={() => setEnlargedGraph(null)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: '#cdcdcdff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 16px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '600',
+              zIndex: 10001,
+            }}
+          >
+            ✕
+          </button>
+          <Line
+            data={dailyAvgData}
+            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Average Daily Spending', font: { size: 20 } } } }}
+          />
+        </div>
+      )}
+
+      {enlargedGraph === 'budget' && (
+        <div style={enlargedCardStyle}>
+          <button
+            onClick={() => setEnlargedGraph(null)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: '#cdcdcdff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 16px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '600',
+              zIndex: 10001,
+            }}
+          >
+            ✕
+          </button>
+          <Line
+            data={budgetData}
+            options={{ ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: true, text: 'Spending vs Budget', font: { size: 20 } } } }}
+          />
+        </div>
+      )}
+
     </div>
   );
 };

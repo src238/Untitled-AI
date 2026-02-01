@@ -8,6 +8,7 @@ import GraphAnalysis from './src/components/GraphAnalysis'
 import BudgetPlanner from './src/components/BudgetPlanner'
 
 import '@liminalcash/nim-chat/styles.css'
+import myImage from '/src/images/liminalLogo.webp'
 
 import './styles.css'
 
@@ -293,9 +294,16 @@ const alertCounts = {
       <main className="main-content">
         <div className="balance-info">
             <span className="balance-label">Current Balance</span>
-            <h1 className="balance-amount">
-              ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </h1>
+            <div className="balance-title-container">
+              <h1 className="balance-amount">
+                ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </h1>
+              <div className="liminalSection">
+                <img src={myImage} alt="Description" className="liminalLogoIMG"/>
+                <h1 className="liminal-text">liminal</h1>
+              </div>
+              
+            </div>
           </div>
         <div className="mode-buttons">
           <button

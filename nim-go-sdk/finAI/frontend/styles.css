@@ -273,6 +273,7 @@ body {
 .balance-info {
 flex: 1;
 background: var(--white);
+padding: 1vh 0;
 }
 
 .balance-label {
@@ -289,20 +290,68 @@ margin-bottom: 0.5rem;
 }
 
 .balance-amount {
-font-family: 'ABC Marist', sans-serif;
-font-weight: 500;
-font-size: clamp(3rem, 6vw, 4.5rem);
-line-height: 1;
-letter-spacing: -0.03em;
-color: var(--black);
-animation: countUp 0.6s ease;
-background: var(--white);
-margin-left: 1rem;
+  display: inline;
+  font-family: 'ABC Marist', sans-serif;
+  font-weight: 500;
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  animation: countUp 0.6s ease;
+  background: var(--white);
+}
+
+.liminal-text {
+  display: inline;
+  font-family: 'ABC Marist', sans-serif;
+  font-weight: 500;
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--beige);
+  opacity: 0.8;
+  animation: countUpLiminalText 0.6s ease;
+  background: var(--white);
+  align-self: flex-end; /* Aligns to bottom */
+  transform: translateY(-1vh); /* Raises it up by 1vh */
+}
+
+.balance-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 2vw 0 0.6vw;
+}
+
+.liminalLogoIMG {
+  display: inline;
+  width: 5vw;
+  height: 5vw;
+  align-self: flex-end; /* Aligns to bottom */
+  animation: countUpLiminalLogo 0.6s ease;
+  transform: translateY(-1.5vh); /* Raises it up by 1vh */
+  margin-right: 1vw;
+}
+
+.liminalSection {
+  display: flex;
 }
 
 @keyframes countUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes countUpLiminalText {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 0.8; transform: translateY(-1vh); }
+}
+
+
+@keyframes countUpLiminalLogo {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(-1.5vh); }
 }
 
 .balance-actions {
@@ -366,7 +415,7 @@ margin: 1.5rem 0.25rem 0.5rem;
 .transactions-list {
 background: var(--white);
 overflow: hidden;
-max-height: 500px;
+max-height: 67vh;
 overflow-y: auto;
 border: black;
 border-style: solid;
