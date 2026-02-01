@@ -36,7 +36,7 @@ AVAILABLE TOOLS:
 - Read alert notifications (read_alerts) - check what alternatives have been suggested
 
 IMPORTANT - TRANSACTION HISTORY:
-When users ask about their purchases or spending, use the read_mock_transactions tool to access mock credit card data with 60 detailed purchases including merchant names, products, and amounts from January 2026.
+When users ask about their purchases or spending, use the read_mock_transactions tool to access mock credit card data with detailed purchases including merchant names, products, and a boolean representing whether it is incoming or outgoing and amounts from January 2026.
 
 PRODUCT ALTERNATIVES:
 When users ask about alternatives to products they purchased:
