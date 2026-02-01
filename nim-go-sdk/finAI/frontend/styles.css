@@ -366,7 +366,7 @@ margin: 1.5rem 0.25rem 0.5rem;
 .transactions-list {
 background: var(--white);
 overflow: hidden;
-max-height: 500px;
+max-height: 65vh;
 overflow-y: auto;
 border: black;
 border-style: solid;
@@ -376,6 +376,20 @@ border-top: none;
 border-top-left-radius: 0px;
 border-top-right-radius: 0px;
 }
+.transactions-recurring-list {
+background: var(--white);
+overflow: hidden;
+max-height: 50vh;
+overflow-y: auto;
+border: black;
+border-style: solid;
+border-radius: 8px;
+border-width: 0rem;
+border-top: none;
+border-top-left-radius: 0px;
+border-top-right-radius: 0px;
+}
+
 
 .transaction-item {
   display: flex;

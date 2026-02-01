@@ -91,7 +91,7 @@ export default function RecurringPayments({ }: RecurringPaymentsProps) {
           <span className="balance-label">Est. Monthly Recurring</span>
           <h1 className="balance-amount">${monthlyTotal.toFixed(2)}</h1>
         </div>
-        <div className="transactions-list">
+        <div className="transactions-recurring-list">
           {payments.length === 0 ? (
             <p className="empty-transactions">No recurring payments detected.</p>
           ) : (
