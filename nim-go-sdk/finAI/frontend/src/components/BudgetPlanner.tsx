@@ -413,7 +413,7 @@ export default function BudgetPlanner({ balance }: BudgetPlannerProps) {
                   marginBottom: '0.75rem',
                   lineHeight: '1'
                 }}>
-                  {budgetComparison.achievedTarget ? '✓ Budget Achieved' : '⚠ Target Missed'}
+                  {budgetComparison.achievedTarget ? '✓ Savings Target Achieved' : '⚠ Target Missed'}
                 </div>
 
                 <div style={{
