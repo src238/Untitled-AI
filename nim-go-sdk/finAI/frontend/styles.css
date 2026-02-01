@@ -415,11 +415,7 @@ margin: 1.5rem 0.25rem 0.5rem;
 .transactions-list {
 background: var(--white);
 overflow: hidden;
-<<<<<<< HEAD
 max-height: 67vh;
-=======
-max-height: 65vh;
->>>>>>> 751f30bd2cbcce0060cc1fc6a94116e1df6bc157
 overflow-y: auto;
 border: black;
 border-style: solid;
