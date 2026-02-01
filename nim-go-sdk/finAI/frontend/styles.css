@@ -300,9 +300,10 @@ body {
 }
 
 .balance-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 0rem;
+display: flex;
+gap: 0.75rem;
+margin-top: 0rem;
+margin-right: 1rem;
 }
 
 .action-btn {
