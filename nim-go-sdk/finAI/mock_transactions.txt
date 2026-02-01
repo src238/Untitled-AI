@@ -7,7 +7,7 @@ Period: January 1-30, 2026
 
 DATE       | MERCHANT                    | PRODUCT/SERVICE                           | AMOUNT  | INCOMING
 -----------|----------------------------|-------------------------------------------|---------|--------
-2026-01-30 | Amazon.com                 | Echo Dot (5th Gen) Smart Speaker          | $4900.99  | F
+2026-01-30 | RussianMob.com             | crypto transfer                             | $4900.99  | F
 2026-01-30 | Employer - Direct Deposit  | Bi-weekly salary deposit                  | $2,850.00 | T
 2026-01-30 | Starbucks                  | Grande Latte, Blueberry Muffin            | $8.45   | F
 2026-01-29 | Netflix                    | Premium Plan Monthly Subscription         | $22.99  | F
