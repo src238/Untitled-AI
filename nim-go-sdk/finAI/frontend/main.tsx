@@ -271,12 +271,12 @@ const alertCounts = {
   	  </button>
 	</div>
         <div className="alerts-container">
-          {alerts.length === 0 ? (
+          {filteredAlerts.length === 0 ? (
             <div className="empty-state">
               <p>No alerts yet. I'll notify you of important insights.</p>
             </div>
           ) : (
-            alerts.map(alert => (
+            filteredAlerts.map(alert => (
               <div key={alert.id} className={`alert-card alert-${alert.type}`}>
                 <div className="alert-content">
                   <p className="alert-message">{renderAlertMessage(alert.message)}</p>
