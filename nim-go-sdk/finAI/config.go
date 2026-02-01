@@ -22,6 +22,9 @@ const (
 	AnalysisResetDelay     = 60 * time.Second
 	AnalysisTimeout        = 60 * time.Second
 
+	// Suspicious Transaction Threshold
+	LargeTransactionThreshold = 1000.0
+
 	// Alert settings
 	MaxAlertsStored        = 100
 	AlertRetentionHours    = 24

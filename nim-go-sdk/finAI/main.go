@@ -17,11 +17,14 @@ var (
 	alerts               []Alert
 	checkedProductsMutex sync.RWMutex
 	checkedProducts      map[string]bool // Track which products have been checked for alternatives
+	checkedLargeTransactions sync.RWMutex    
+	largeTransactionsSeen    map[string]bool
 )
 
 func main() {
 	// Initialize global tracking map
 	checkedProducts = make(map[string]bool)
+	largeTransactionsSeen = make(map[string]bool)
 
 	// Load configuration
 	cfg, err := LoadConfig()
@@ -70,7 +73,10 @@ func main() {
 
 	// Start AI background analysis loop
 	go startAIAnalysisLoop(cfg.AnthropicKey)
-	log.Println("✅ Started AI background analysis loop (runs every 30 seconds)")
+	log.Println("✅ Started AI background analysis loop (runs every 5 seconds)")
+
+	go startLargeTransactionMonitor()
+	log.Println("✅ Started large transaction monitor (checks for $1000+ transactions)")
 
 	// Setup HTTP endpoints
 	setupHTTPHandlers()

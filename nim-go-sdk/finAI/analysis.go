@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"strconv"
 	"time"
 
 	"github.com/anthropics/anthropic-sdk-go"
@@ -25,6 +26,88 @@ func startAIAnalysisLoop(anthropicKey string) {
 		analyzeNextProduct(clientPtr)
 		time.Sleep(AnalysisInterval)
 	}
+}
+
+// startLargeTransactionMonitor checks for transactions over $1000
+func startLargeTransactionMonitor() {
+	// Wait a bit before starting to let the system initialize
+	time.Sleep(2 * time.Second)
+
+	for {
+		checkForLargeTransactions()
+		time.Sleep(AnalysisInterval) // Check at same interval as product analysis
+	}
+}
+
+// checkForLargeTransactions scans recent transactions for large amounts
+func checkForLargeTransactions() {
+	// Read and filter transactions
+	transactions, err := readMockTransactions()
+	if err != nil {
+		log.Printf("❌ Failed to read transactions for large tx check: %v", err)
+		return
+	}
+
+	recentTransactions := filterRecentTransactions(transactions, TransactionLookbackDays)
+	if len(recentTransactions) == 0 {
+		return
+	}
+
+	// Check each transaction for large amounts
+	for _, tx := range recentTransactions {
+		// Skip incoming transactions (we only warn about outgoing)
+		if tx.IsIncoming {
+			continue
+		}
+
+		// Parse the amount
+		amountStr := strings.ReplaceAll(strings.TrimPrefix(tx.Amount, "$"), ",", "")
+		amount, err := strconv.ParseFloat(amountStr, 64)
+		if err != nil {
+			continue // Skip if we can't parse the amount
+		}
+
+		// Check if it's a large transaction
+		if amount >= LargeTransactionThreshold {
+			// Create unique ID for this transaction to avoid duplicate warnings
+			txID := fmt.Sprintf("%s-%s-%s", tx.Date, tx.Merchant, tx.Amount)
+
+			// Check if we've already warned about this transaction
+			checkedLargeTransactions.Lock()
+			alreadyWarned := largeTransactionsSeen[txID]
+			if !alreadyWarned {
+				largeTransactionsSeen[txID] = true
+			}
+			checkedLargeTransactions.Unlock()
+
+			// Post warning if this is a new large transaction
+			if !alreadyWarned {
+				postLargeTransactionWarning(tx, amount)
+			}
+		}
+	}
+}
+
+// postLargeTransactionWarning creates a warning alert for large transactions
+func postLargeTransactionWarning(tx Transaction, amount float64) {
+	message := fmt.Sprintf("⚠️ Large Transaction Alert: %s - $%.2f spent at %s on %s",
+		tx.Product, amount, tx.Merchant, tx.Date)
+
+	alert := Alert{
+		ID:        fmt.Sprintf("large-tx-%d", time.Now().UnixNano()),
+		Message:   message,
+		Timestamp: time.Now(),
+		Type:      "warning", // ✅ Using "warning" type
+	}
+
+	alertsMutex.Lock()
+	alerts = append(alerts, alert)
+	if len(alerts) > MaxAlertsStored {
+		alerts = alerts[len(alerts)-MaxAlertsStored:]
+	}
+	alertsMutex.Unlock()
+
+	log.Printf("⚠️ Posted large transaction warning: %s ($%.2f)", tx.Product, amount)
 }
 
 // analyzeNextProduct finds and analyzes one unchecked product
