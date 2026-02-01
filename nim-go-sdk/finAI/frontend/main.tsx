@@ -40,6 +40,8 @@ function App() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [alerts, setAlerts] = useState<Alert[]>([])
 
+  const [alertFilter, setAlertFilter] = useState<'all' | 'info' | 'warning' | 'success'>('all')
+
   const [currentMode, setCurrentMode] = useState('recent-transactions') //either 'recent-transactions', 'graph-analysis', 'recurring-payments' or 'budget-planner'
 
   const [messages, setMessages] = useState<Message[]>([
@@ -223,6 +225,16 @@ function App() {
       return <span key={index}>{part}</span>
     })
   }
+const filteredAlerts = alertFilter === 'all' 
+  ? alerts 
+  : alerts.filter(alert => alert.type === alertFilter)
+
+const alertCounts = {
+  all: alerts.length,
+  info: alerts.filter(a => a.type === 'info').length,
+  warning: alerts.filter(a => a.type === 'warning').length,
+  success: alerts.filter(a => a.type === 'success').length,
+}
 
   return (
     <div className="dashboard-container">
@@ -232,6 +244,32 @@ function App() {
           <h2>AI Insights</h2>
           <div className="pulse-indicator"></div>
         </div>
+	<div className="alert-filters">
+  	  <button
+    	    className={`filter-btn ${alertFilter === 'all' ? 'active' : ''}`}
+    	    onClick={() => setAlertFilter('all')}
+  	  >
+    	    All <span className="filter-count">{alertCounts.all}</span>
+  	  </button>
+  	  <button
+    	    className={`filter-btn filter-warning ${alertFilter === 'warning' ? 'active' : ''}`}
+    	    onClick={() => setAlertFilter('warning')}
+  	  >
+    	    Warnings <span className="filter-count">{alertCounts.warning}</span>
+  	  </button>
+  	  <button
+    	    className={`filter-btn filter-success ${alertFilter === 'success' ? 'active' : ''}`}
+    	    onClick={() => setAlertFilter('success')}
+  	  >
+    	    Savings <span className="filter-count">{alertCounts.success}</span>
+  	  </button>
+  	  <button
+    	    className={`filter-btn filter-info ${alertFilter === 'info' ? 'active' : ''}`}
+    	    onClick={() => setAlertFilter('info')}
+  	  >
+    	    Info <span className="filter-count">{alertCounts.info}</span>
+  	  </button>
+	</div>
         <div className="alerts-container">
           {alerts.length === 0 ? (
             <div className="empty-state">
