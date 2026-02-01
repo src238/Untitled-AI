@@ -173,7 +173,7 @@ body {
 }
 
 .alert-link:visited {
-  color: var(--brown);
+  color: var(--orange);
 }
 
 /* Center - Main Content */
@@ -349,11 +349,11 @@ body {
   letter-spacing: -0.01em;
 }
 
-.transaction-amount.credit {
+.transaction-amount.incoming {
   color: var(--blue);
 }
 
-.transaction-amount.debit {
+.transaction-amount.outgoing {
   color: var(--brown);
 }
 

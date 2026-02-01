@@ -15,10 +15,11 @@ type Alert struct {
 
 // Transaction represents a parsed transaction from mock data
 type Transaction struct {
-	Date     string
-	Merchant string
-	Product  string
-	Amount   string
+	Date       string
+	Merchant   string
+	Product    string
+	Amount     string
+	IsIncoming bool
 }
 
 // TransactionAPI represents a transaction in the API response format
@@ -27,8 +28,8 @@ type TransactionAPI struct {
 	Amount      float64 `json:"amount"`
 	Description string  `json:"description"`
 	Date        string  `json:"date"`
-	Type        string  `json:"type"`
 	Merchant    string  `json:"merchant"`
+	IsIncoming  bool    `json:"isIncoming"`
 }
 
 // ToolParams represents common parameters for tool handlers

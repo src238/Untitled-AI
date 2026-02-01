@@ -4,81 +4,84 @@ Account Holder: John Smith
 Card: **** **** **** 4582
 Period: January 1-30, 2026
 
-DATE       | MERCHANT                    | PRODUCT/SERVICE                           | AMOUNT
------------|----------------------------|-------------------------------------------|----------
-2026-01-30 | Amazon.com                 | Echo Dot (5th Gen) Smart Speaker          | $49.99
-2026-01-30 | Starbucks #2847            | Grande Latte, Blueberry Muffin            | $8.45
-2026-01-29 | Netflix                    | Premium Plan Monthly Subscription         | $22.99
-2026-01-29 | Shell Gas Station          | Fuel - 12.5 gallons                       | $43.75
-2026-01-28 | Whole Foods Market         | Organic Groceries (produce, dairy, meat)  | $127.83
-2026-01-28 | Uber                       | Ride from Downtown to Airport             | $34.50
-2026-01-27 | Target                     | Household items (cleaning supplies, towels)| $68.92
-2026-01-27 | Chipotle Mexican Grill     | Burrito Bowl, Chips & Guacamole           | $15.67
-2026-01-26 | Apple.com                  | iCloud+ 200GB Storage (Monthly)           | $2.99
-2026-01-26 | Best Buy                   | USB-C Hub, HDMI Cable                     | $45.23
-2026-01-25 | Spotify                    | Premium Individual Plan (Monthly)         | $11.99
-2026-01-25 | CVS Pharmacy               | Prescription refill, Vitamins             | $24.15
-2026-01-24 | Trader Joe's               | Weekly groceries and frozen meals         | $89.47
-2026-01-24 | AMC Theatres               | 2 Movie Tickets - Dune: Part Three        | $32.00
-2026-01-23 | Panera Bread               | Mediterranean Bowl, Green Tea             | $13.28
-2026-01-23 | Nike.com                   | Air Max Running Shoes - Size 10           | $139.99
-2026-01-22 | DoorDash                   | Dinner from Olive Garden (delivery)       | $47.83
-2026-01-22 | Home Depot                 | Paint supplies, brushes, drop cloth       | $94.56
-2026-01-21 | Costco Wholesale           | Bulk groceries and household items        | $213.47
-2026-01-21 | McDonald's                 | Big Mac Meal, McFlurry                    | $12.34
-2026-01-20 | AT&T                       | Mobile Phone Plan (Monthly)               | $75.00
-2026-01-20 | LinkedIn Premium           | Career Plan (Monthly)                     | $29.99
-2026-01-19 | Lululemon                  | Yoga Mat, Athletic Shorts                 | $112.00
-2026-01-19 | Dunkin' Donuts             | Medium Coffee, Boston Kreme Donut         | $6.78
-2026-01-18 | Steam                      | Video Game: Elden Ring DLC                | $39.99
-2026-01-18 | Safeway                    | Groceries and deli items                  | $76.32
-2026-01-17 | Adobe Creative Cloud       | Photography Plan (Monthly)                | $9.99
-2026-01-17 | Cheesecake Factory         | Dinner for two, appetizer, dessert        | $89.45
-2026-01-16 | Etsy                       | Handmade ceramic mug set                  | $42.00
-2026-01-16 | BP Gas Station             | Fuel - 14.2 gallons                       | $49.70
-2026-01-15 | REI Co-op                  | Hiking backpack, water bottle             | $156.89
-2026-01-15 | Subway                     | Footlong Turkey Sub, Chips, Cookie        | $11.45
-2026-01-14 | Microsoft 365              | Family Plan Annual Subscription           | $99.99
-2026-01-14 | Verizon Fios               | Internet + TV Bundle (Monthly)            | $119.99
-2026-01-13 | Walgreens                  | Cold medicine, tissues, hand sanitizer    | $31.27
-2026-01-13 | Five Guys                  | Cheeseburger, Fries, Shake                | $18.92
-2026-01-12 | Nordstrom                  | Dress shirt, leather belt                 | $98.50
-2026-01-12 | Audible                    | Premium Plus Plan (Monthly)               | $14.95
-2026-01-11 | Kroger                     | Weekly groceries                          | $103.68
-2026-01-11 | Shake Shack                | ShackBurger combo meal                    | $14.23
-2026-01-10 | PlayStation Network        | PS Plus Premium (Annual)                  | $119.99
-2026-01-10 | Panda Express              | Orange Chicken, Fried Rice, Spring Roll   | $13.89
-2026-01-09 | IKEA                       | Desk lamp, storage boxes, picture frames  | $67.43
-2026-01-09 | The New York Times         | Digital Subscription (Monthly)            | $17.00
-2026-01-08 | Sephora                    | Skincare products, makeup                 | $87.65
-2026-01-08 | Taco Bell                  | Crunchwrap Supreme Combo                  | $9.56
-2026-01-07 | Wayfair                    | Area rug for living room                  | $184.99
-2026-01-07 | Grubhub                    | Thai food delivery for dinner             | $38.75
-2026-01-06 | Barnes & Noble             | 3 Hardcover books                         | $72.85
-2026-01-06 | Peet's Coffee              | Large Cold Brew, Almond Croissant         | $9.34
-2026-01-05 | Peloton                    | All-Access Membership (Monthly)           | $44.00
-2026-01-05 | Wendy's                    | Dave's Double combo, Frosty               | $12.67
-2026-01-04 | Lowe's                     | Garden tools, potting soil, plants        | $113.29
-2026-01-04 | Disney+                    | Premium Plan (Monthly)                    | $13.99
-2026-01-03 | Instacart                  | Grocery delivery from Albertsons          | $95.42
-2026-01-03 | Chick-fil-A                | Spicy Deluxe Sandwich meal                | $11.78
-2026-01-02 | GameStop                   | Nintendo Switch game cartridge            | $59.99
-2026-01-02 | Aldi                       | Budget groceries and snacks               | $54.33
-2026-01-01 | Hulu                       | No Ads Plan (Monthly)                     | $17.99
-2026-01-01 | Jersey Mike's Subs         | Giant sub sandwich                        | $16.45
+
+DATE       | MERCHANT                    | PRODUCT/SERVICE                           | AMOUNT  | INCOMING
+-----------|----------------------------|-------------------------------------------|---------|--------
+2026-01-30 | Amazon.com                 | Echo Dot (5th Gen) Smart Speaker          | $49.99  | F
+2026-01-30 | Employer - Direct Deposit  | Bi-weekly salary deposit                  | $2,850.00 | T
+2026-01-30 | Starbucks                  | Grande Latte, Blueberry Muffin            | $8.45   | F
+2026-01-29 | Netflix                    | Premium Plan Monthly Subscription         | $22.99  | F
+2026-01-29 | Shell Gas Station          | Fuel - 12.5 gallons                       | $43.75  | F
+2026-01-28 | Whole Foods Market         | Organic Groceries (produce, dairy, meat)  | $127.83 | F
+2026-01-28 | Uber                       | Ride from Downtown to Airport             | $34.50  | F
+2026-01-28 | Venmo                      | Payment from @sarah_k for dinner split    | $24.50  | T
+2026-01-27 | Target                     | Household items (cleaning supplies, towels)| $68.92 | F
+2026-01-27 | Chipotle Mexican Grill     | Burrito Bowl, Chips & Guacamole           | $15.67  | F
+2026-01-26 | Apple.com                  | iCloud+ 200GB Storage (Monthly)           | $2.99   | F
+2026-01-26 | Best Buy                   | USB-C Hub, HDMI Cable                     | $45.23  | F
+2026-01-25 | Spotify                    | Premium Individual Plan (Monthly)         | $11.99  | F
+2026-01-25 | CVS Pharmacy               | Prescription refill, Vitamins             | $24.15  | F
+2026-01-25 | PayPal                     | Freelance web design payment - Invoice #1042 | $475.00 | T
+2026-01-24 | Trader Joe's               | Weekly groceries and frozen meals         | $89.47  | F
+2026-01-24 | AMC Theatres               | 2 Movie Tickets - Dune: Part Three        | $32.00  | F
+2026-01-23 | Panera Bread               | Mediterranean Bowl, Green Tea             | $13.28  | F
+2026-01-23 | Nike.com                   | Air Max Running Shoes - Size 10           | $139.99 | F
+2026-01-22 | DoorDash                   | Dinner from Olive Garden (delivery)       | $47.83  | F
+2026-01-22 | Home Depot                 | Paint supplies, brushes, drop cloth       | $94.56  | F
+2026-01-22 | Zelle                      | Rent reimbursement from roommate          | $650.00 | T
+2026-01-21 | Costco Wholesale           | Bulk groceries and household items        | $213.47 | F
+2026-01-21 | McDonald's                 | Big Mac Meal, McFlurry                    | $12.34  | F
+2026-01-20 | AT&T                       | Mobile Phone Plan (Monthly)               | $75.00  | F
+2026-01-20 | LinkedIn Premium           | Career Plan (Monthly)                     | $29.99  | F
+2026-01-20 | Employer - Direct Deposit  | Bonus - Q4 performance                    | $1,200.00 | T
+2026-01-19 | Lululemon                  | Yoga Mat, Athletic Shorts                 | $112.00 | F
+2026-01-19 | Dunkin' Donuts             | Medium Coffee, Boston Kreme Donut         | $6.78   | F
+2026-01-18 | Steam                      | Video Game: Elden Ring DLC                | $39.99  | F
+2026-01-18 | Cash App                   | Payment from @jmike for concert tickets   | $87.00  | T
+2026-01-18 | Safeway                    | Groceries and deli items                  | $76.32  | F
+2026-01-17 | Adobe Creative Cloud       | Photography Plan (Monthly)                | $9.99   | F
+2026-01-17 | Cheesecake Factory         | Dinner for two, appetizer, dessert        | $89.45  | F
+2026-01-16 | Etsy                       | Handmade ceramic mug set                  | $42.00  | F
+2026-01-16 | BP Gas Station             | Fuel - 14.2 gallons                       | $49.70  | F
+2026-01-15 | REI Co-op                  | Hiking backpack, water bottle             | $156.89 | F
+2026-01-15 | Employer - Direct Deposit  | Bi-weekly salary deposit                  | $2,850.00 | T
+2026-01-15 | Subway                     | Footlong Turkey Sub, Chips, Cookie        | $11.45  | F
+2026-01-14 | Microsoft 365              | Family Plan Annual Subscription           | $99.99  | F
+2026-01-14 | Verizon Fios               | Internet + TV Bundle (Monthly)            | $119.99 | F
+2026-01-13 | Walgreens                  | Cold medicine, tissues, hand sanitizer    | $31.27  | F
+2026-01-13 | Five Guys                  | Cheeseburger, Fries, Shake                | $18.92  | F
+2026-01-12 | Nordstrom                  | Dress shirt, leather belt                 | $98.50  | F
+2026-01-12 | Audible                    | Premium Plus Plan (Monthly)               | $14.95  | F
+2026-01-11 | Kroger                     | Weekly groceries                          | $103.68 | F
+2026-01-12 | Etsy                       | Sale - Handmade leather wallet            | $38.00  | T
+2026-01-11 | Shake Shack                | ShackBurger combo meal                    | $14.23  | F
+2026-01-10 | PlayStation Network        | PS Plus Premium (Annual)                  | $119.99 | F
+2026-01-10 | Panda Express              | Orange Chicken, Fried Rice, Spring Roll   | $13.89  | F
+2026-01-10 | PayPal                     | Refund - Nike.com order #NKE-88421        | $139.99 | T
+2026-01-09 | IKEA                       | Desk lamp, storage boxes, picture frames  | $67.43  | F
+2026-01-09 | The New York Times         | Digital Subscription (Monthly)            | $17.00  | F
+2026-01-08 | Sephora                    | Skincare products, makeup                 | $87.65  | F
+2026-01-08 | Taco Bell                  | Crunchwrap Supreme Combo                  | $9.56   | F
+2026-01-07 | Wayfair                    | Area rug for living room                  | $184.99 | F
+2026-01-08 | Venmo                      | Payment from @lisa_m for group trip       | $110.00 | T
+2026-01-07 | Grubhub                    | Thai food delivery for dinner             | $38.75  | F
+2026-01-06 | Barnes & Noble             | 3 Hardcover books                         | $72.85  | F
+2026-01-06 | Peet's Coffee              | Large Cold Brew, Almond Croissant         | $9.34   | F
+2026-01-05 | Peloton                    | All-Access Membership (Monthly)           | $44.00  | F
+2026-01-05 | Wendy's                    | Dave's Double combo, Frosty               | $12.67  | F
+2026-01-05 | Employer - Direct Deposit  | Bi-weekly salary deposit                  | $2,850.00 | T
+2026-01-04 | Lowe's                     | Garden tools, potting soil, plants        | $113.29 | F
+2026-01-04 | Disney+                    | Premium Plan (Monthly)                    | $13.99  | F
+2026-01-03 | Instacart                  | Grocery delivery from Albertsons          | $95.42  | F
+2026-01-03 | Cash App                   | Payment from @dan_r for poker night       | $45.00  | T
+2026-01-03 | Chick-fil-A                | Spicy Deluxe Sandwich meal                | $11.78  | F
+2026-01-02 | GameStop                   | Nintendo Switch game cartridge            | $59.99  | F
+2026-01-02 | Aldi                       | Budget groceries and snacks               | $54.33  | F
+2026-01-01 | Zelle                      | Birthday gift from grandma                | $200.00 | T
+2026-01-01 | Hulu                       | No Ads Plan (Monthly)                     | $17.99  | F
+2026-01-01 | Jersey Mike's Subs         | Giant sub sandwich                        | $16.45  | F
 
 =====================================
-TOTAL TRANSACTIONS: 60
+TOTAL TRANSACTIONS: 73
 TOTAL AMOUNT: $3,847.22
 =====================================
-
-CATEGORY BREAKDOWN:
-- Groceries: $1,024.32
-- Restaurants/Food: $486.89
-- Subscriptions: $503.83
-- Shopping/Retail: $892.61
-- Gas/Transportation: $162.45
-- Entertainment: $251.98
-- Utilities/Services: $194.99
-- Health/Pharmacy: $55.42
-- Other: $275.73

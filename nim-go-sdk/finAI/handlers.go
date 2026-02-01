@@ -103,11 +103,15 @@ func formatTransactionsForAPI(transactions []Transaction) []TransactionAPI {
 
 	for i, tx := range transactions {
 		// Parse amount (remove $ and convert to float)
-		amountStr := strings.TrimPrefix(tx.Amount, "$")
+		amountStr := strings.ReplaceAll(strings.TrimPrefix(tx.Amount, "$"), ",", "")
 		amount := 0.0
 		if _, err := fmt.Sscanf(amountStr, "%f", &amount); err != nil {
 			// Log error but continue with 0.0 as default
 			fmt.Printf("Warning: Failed to parse amount '%s': %v\n", amountStr, err)
+		}
+
+		if !tx.IsIncoming {
+			amount = -amount
 		}
 
 		formatted = append(formatted, TransactionAPI{
@@ -115,8 +119,8 @@ func formatTransactionsForAPI(transactions []Transaction) []TransactionAPI {
 			Amount:      -amount, // Negative for debits
 			Description: tx.Product,
 			Date:        tx.Date,
-			Type:        "debit",
 			Merchant:    tx.Merchant,
+			IsIncoming:  tx.IsIncoming,
 		})
 	}
 
