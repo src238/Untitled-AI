@@ -271,7 +271,9 @@ body {
 }
 
 .balance-info {
-  flex: 1;
+flex: 1;
+background: var(--white);
+border-radius: 8px;
 }
 
 .balance-label {
@@ -281,17 +283,22 @@ body {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   display: block;
-  margin-bottom: 0.75rem;
+  background: var(--white);
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .balance-amount {
-  font-family: 'ABC Marist', sans-serif;
-  font-weight: 500;
-  font-size: clamp(3rem, 6vw, 4.5rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--black);
-  animation: countUp 0.6s ease;
+font-family: 'ABC Marist', sans-serif;
+font-weight: 500;
+font-size: clamp(3rem, 6vw, 4.5rem);
+line-height: 1;
+letter-spacing: -0.03em;
+color: var(--black);
+animation: countUp 0.6s ease;
+background: var(--white);
+margin-left: 1rem;
 }
 
 @keyframes countUp {
@@ -303,7 +310,8 @@ body {
 display: flex;
 gap: 0.75rem;
 margin-top: 0rem;
-margin-right: 1rem;
+margin-right: 0rem;
+background: var(--white);
 }
 
 .action-btn {
@@ -663,8 +671,9 @@ border-top-right-radius: 0px;
   color: var(--white);
   background: var(--black);
   padding: 0.5rem 1rem;
-  border-radius: 20px;
+  border-radius: 8px;
   letter-spacing: -0.01em;
+  margin-left: 1rem;
 }
 
 .recurring-main-row {

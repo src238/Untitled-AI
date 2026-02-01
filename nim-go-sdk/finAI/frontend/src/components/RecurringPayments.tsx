@@ -80,17 +80,17 @@ export default function RecurringPayments({ }: RecurringPaymentsProps) {
   return (
     <>
       <header className="balance-header">
-        <div className="balance-info">
+        <h3 className="section-title">Recurring Payments</h3>
+      </header>
+
+      <section className="transactions-section" style={{ marginTop: '0rem' }}>
+          <div className="balance-info">
+          <div className="balance-actions">
+          <span className="recurring-count-badge">{payments.length} active</span>
+          </div>
           <span className="balance-label">Est. Monthly Recurring</span>
           <h1 className="balance-amount">${monthlyTotal.toFixed(2)}</h1>
         </div>
-        <div className="balance-actions">
-          <span className="recurring-count-badge">{payments.length} active</span>
-        </div>
-      </header>
-
-      <section className="transactions-section" style={{ marginTop: '3rem' }}>
-        <h3 className="section-title">Recurring Payments</h3>
         <div className="transactions-list">
           {payments.length === 0 ? (
             <p className="empty-transactions">No recurring payments detected.</p>
