@@ -17,10 +17,13 @@ const (
 	ClaudeModel            = "claude-sonnet-4-20250514"
 
 	// Analysis loop timing
-	AnalysisInitialDelay   = 10 * time.Second
-	AnalysisInterval       = 30 * time.Second
+	AnalysisInitialDelay   = 0 * time.Second
+	AnalysisInterval       = 5 * time.Second
 	AnalysisResetDelay     = 60 * time.Second
 	AnalysisTimeout        = 60 * time.Second
+
+	// Suspicious Transaction Threshold
+	LargeTransactionThreshold = 1000.0
 
 	// Alert settings
 	MaxAlertsStored        = 100
