@@ -1,0 +1,60 @@
+pickup repeated billing purchases and list separately
+
+find purchase alternatives nad list
+
+predict when gonna go over budget 
+
+compare monthly total spendings and show when more/less than average on a given day through month
+
+
+transaction
+
+
+
+graphs:
+- 
+
+
+
+
+------------------
+alerts:
+- good, info/warning, danger
+- good: alternative found, or smth got cheaper?
+- info: recurring subscription every 3 months "still using?"
+- warning: suspicious payments
+
+
+alerts bubble can take whole left side
+or toggle to show count of good,info,warning
+
+toggle between completed(marked) and new(unmarked) filter
+
+--------------------
+modes:
+- transaction history
+- graph/analysis mode
+- recurring payments
+- set budget
+
+transaction history
+- all past transactions
+- filter by sending/receiving (or all)
+
+graphs:
+- last 30 days compare how average spending differs - line graph
+- pie chart of different spendings across sectors/categories (entertainment)
+- bar chart of spending on each month
+- budget line graph how close to limit
+
+recurring payments:
+- display a list of payments that occur on a regular basis
+- extension: flag to remind to cancel after x time
+
+set budget:
+- set budget for how much to spend for week/month?
+
+
+
+
+maybe maybe maybe set the transaction history 

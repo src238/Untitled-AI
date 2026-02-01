@@ -7,10 +7,11 @@ Period: January 1-30, 2026
 
 DATE       | MERCHANT                    | PRODUCT/SERVICE                           | AMOUNT  | INCOMING
 -----------|----------------------------|-------------------------------------------|---------|--------
-2026-01-30 | Amazon.com                 | Echo Dot (5th Gen) Smart Speaker          | $49.99  | F
+2026-01-30 | Amazon.com                 | Echo Dot (5th Gen) Smart Speaker          | $4900.99  | F
 2026-01-30 | Employer - Direct Deposit  | Bi-weekly salary deposit                  | $2,850.00 | T
 2026-01-30 | Starbucks                  | Grande Latte, Blueberry Muffin            | $8.45   | F
 2026-01-29 | Netflix                    | Premium Plan Monthly Subscription         | $22.99  | F
+2026-01-29 | Disney+                    | Premium Plan (Biweekly)                    | $13.99  | F
 2026-01-29 | Shell Gas Station          | Fuel - 12.5 gallons                       | $43.75  | F
 2026-01-28 | Whole Foods Market         | Organic Groceries (produce, dairy, meat)  | $127.83 | F
 2026-01-28 | Uber                       | Ride from Downtown to Airport             | $34.50  | F
@@ -46,6 +47,7 @@ DATE       | MERCHANT                    | PRODUCT/SERVICE                      
 2026-01-15 | REI Co-op                  | Hiking backpack, water bottle             | $156.89 | F
 2026-01-15 | Employer - Direct Deposit  | Bi-weekly salary deposit                  | $2,850.00 | T
 2026-01-15 | Subway                     | Footlong Turkey Sub, Chips, Cookie        | $11.45  | F
+2026-01-15 | Disney+                    | Premium Plan (Biweekly)                    | $13.99  | F
 2026-01-14 | Microsoft 365              | Family Plan Annual Subscription           | $99.99  | F
 2026-01-14 | Verizon Fios               | Internet + TV Bundle (Monthly)            | $119.99 | F
 2026-01-13 | Walgreens                  | Cold medicine, tissues, hand sanitizer    | $31.27  | F
@@ -71,7 +73,6 @@ DATE       | MERCHANT                    | PRODUCT/SERVICE                      
 2026-01-05 | Wendy's                    | Dave's Double combo, Frosty               | $12.67  | F
 2026-01-05 | Employer - Direct Deposit  | Bi-weekly salary deposit                  | $2,850.00 | T
 2026-01-04 | Lowe's                     | Garden tools, potting soil, plants        | $113.29 | F
-2026-01-04 | Disney+                    | Premium Plan (Monthly)                    | $13.99  | F
 2026-01-03 | Instacart                  | Grocery delivery from Albertsons          | $95.42  | F
 2026-01-03 | Cash App                   | Payment from @dan_r for poker night       | $45.00  | T
 2026-01-03 | Chick-fil-A                | Spicy Deluxe Sandwich meal                | $11.78  | F
@@ -80,6 +81,7 @@ DATE       | MERCHANT                    | PRODUCT/SERVICE                      
 2026-01-01 | Zelle                      | Birthday gift from grandma                | $200.00 | T
 2026-01-01 | Hulu                       | No Ads Plan (Monthly)                     | $17.99  | F
 2026-01-01 | Jersey Mike's Subs         | Giant sub sandwich                        | $16.45  | F
+2026-01-01 | Disney+                    | Premium Plan (Biweekly)                    | $13.99  | F
 
 =====================================
 TOTAL TRANSACTIONS: 73
