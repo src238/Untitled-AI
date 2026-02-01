@@ -1,103 +1,78 @@
-# FinAI - AI-Powered Financial Assistant
+# Liminal AI Sales Finder Agent
 
-Built with nim-go-sdk and Liminal banking APIs.
+## Overview
+The **Liminal AI Sales Finder Agent** is an intelligent assistant designed to help Liminal account holders make better purchasing decisions. By analysing a user’s historical transaction data, the agent identifies cheaper or more suitable alternative products and presents clear, actionable recommendations directly within Liminal’s chat interface.
 
-## Quick Start
+The goal is to reduce unnecessary spending, reduce manual product research, and provide users with confidence that they are making informed and ethical purchasing decisions.
 
-### Prerequisites
+## What Software Are We Creating?
+We are designing a **Sales Finder AI Agent** that analyses past purchases made by a Liminal user and determines whether more cost-effective or better-suited alternatives exist.
 
-- **Go 1.21+** installed
-- **Node.js 18+** installed
-- **Anthropic API key** from [console.anthropic.com](https://console.anthropic.com/)
+The system is split into four core components:
 
-### Setup
+### 1. Transaction Analysis
+Extracts transaction context and interprets the gathered data from a user’s previous transactions, including product type, category, and price.
 
-1. **Configure environment:**
-```bash
-cd nim-go-sdk/finAI
-cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
-```
+### 2. Competitor Finder
+The AI agent then scrapes the web to search for potential viable alternative products or providers that come at a lower cost to the account holder while still fulfilling the key requirements / aspects of the original product.
+### 3. Product Comparison
+Compares the original purchase against the potential alternatives, weighing differences in price, value, drawbacks and potential benefits.
 
-2. **Start the backend:**
-```bash
-go mod tidy
-go run main.go
-```
+### 4. Chat Output Agent
+Sends recommendations and insights to Liminal’s chat system in a clear, readable, and user-friendly format, Providing the alternative, it's price, how much the account holder will save and a link to the product.
 
-You should see:
-```
-✅ Liminal API configured
-✅ Added 9 Liminal banking tools
-✅ Added custom spending analyzer tool
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 Hackathon Starter Server Running
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📡 WebSocket endpoint: ws://localhost:8080/ws
-💚 Health check: http://localhost:8080/health
-```
+## Project Aim
+This project is designed to align with Liminal’s values of **user consent, privacy, and transparency**. The agent only analyses authorised transaction data and provides explainable recommendations, empowering account holders to make the most efficient use of their money, especially in a day and age of a bleak cost of living.
 
-3. **Start the frontend (in a new terminal):**
-```bash
-cd frontend
-npm install
-npm run dev
-```
+## Goals
+Our primary goals for this project are:
 
-Your browser will open to `http://localhost:5173` with the chat interface.
-
-### Usage
-
-1. Click the chat bubble
-2. Login with your email (you'll receive an OTP code)
-3. Enter the code to authenticate
-4. Start chatting! Try:
-   - "What's my balance?"
-   - "Show me my recent transactions"
-   - "Analyze my spending over the last 30 days"
+- Develop a **professional, modular system** that can be adapted or extended by a second-party developer
+- Minimise the need for manual product research by users, reducing uncertainty and decision fatigue
+- Help users feel confident that their purchases are **cost-effective, reliable, and ethically sourced**
+- This project aims to produce a proof of concept for a potential framework that liminal could build upon when creating the foundation for the next age of finances and private banking.
 
 ## Features
+The Liminal AI Sales Finder Agent currently includes:
 
-### Built-in Banking Tools
+- Analysis of recent transaction history
+- Alternative product suggestions based on past purchases
+- A recent transactions list for contextual recommendations
+- A chatbot interface that allows users to communicate directly with the agent through Liminal and perform transactional operations
+- Insight generation that explains *why* an alternative may be beneficial
 
-- Check wallet and savings balances
-- View transaction history
-- Send money to other users
-- Manage savings deposits and withdrawals
-- Search for users
-- View savings rates
+## How Does This Help Customers?
+This tool empowers Liminal users to make smarter financial decisions by:
 
-### Custom Analytics
+- Identifying cheaper or more suitable alternatives quickly
+- Saving time by eliminating tedious manual research
+- Increasing transparency around spending choices
+- Helping users maximise value while providing a secure, safe and trustworthy system that works for their interests, not against them
 
-- **Spending pattern analysis** - Analyze spending velocity and trends
-- **AI-Powered Product Analysis** - Uses Claude AI to identify what products/services were purchased from transaction data
-- Transaction insights
-- Financial recommendations
+Overall, it enables users to spend more efficiently while staying informed and in control of their finances, a service which is now a luxury reserved for the super rich of the modern world.
 
-## Project Structure
+## Challenges Encountered
+During development, we encountered several technical issues, including:
 
-```
-finAI/
-├── main.go              # Go backend server with AI agent
-├── frontend/            # React chat interface
-│   ├── main.tsx         # App entry point
-│   ├── index.html       # Landing page
-│   ├── styles.css       # Styling
-│   └── fonts/           # Custom fonts
-├── go.mod               # Go dependencies
-├── .env.example         # Environment template
-└── README.md            # This file
-```
+- Difficulties connecting to required APIs
+- Network and Wi-Fi instability
+- Environment variable misconfiguration (incorrectly naming the `.env` file), which caused significant debugging delays
 
-## Customization
+These challenges provided valuable experience in debugging, configuration management, and development workflows.
 
-Edit `main.go` to:
-- Add custom tools and financial analysis features
-- Customize the AI personality via `hackathonSystemPrompt`
-- Configure banking operations
+## Limitations and Future Improvements
+While functional, the current version of the project has limitations:
 
-Edit `frontend/main.tsx` to customize the UI.
+- Limited time for user testing and feedback integration
+- Limited testing with real world data
+- Alternative suggestions are based on recent insights rather than long-term learning
+- Product matching could be improved with richer datasets and broader competitor coverage
+- 
 
-## License
+Future improvements could include:
 
-MIT License
+- More advanced pattern analysis over longer transaction histories
+- Improved recommendation accuracy using additional data sources
+- Enhanced explainability and customisation options for users
+- Improved project structure to allow for long term maintenance and development is required
+- Adding further capabilities to the filter and search features for transactions

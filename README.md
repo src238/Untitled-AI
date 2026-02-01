@@ -1,16 +1,77 @@
 # Liminal AI Sales Finder Agent
-## What software are we creating?
-We are creating and designing a Sales Finder AI Agent to search through the history of previous purchases made by a Liminal account holder to determine if there exists a cheaper alternative purchase for them. The agent will determine the most logical product for that transaction type for the user and offers recommendations to help them to make the best choice they can on their purchases and investments. We will split the workload of the program into 4 sections: a receipt reader to retrieve information on previous purchases, a competitor finder to determine similar products produced by other companies, then a product comparator to determine the user of potential benefits this product would have over the found products, then sends the information to another AI that prints this information to Liminal's chat system in an easy and readable interface.
-## What is the aim of our project?
-We aim to create a project that aligns with the values of the users by respecting user consent, privacy and transparency. We also aim to ensure the project and software is used ethically and can suggest ethical responses to ensure the purchases made by the user are not dubious or unsafe. Furthermore, we aim to develop a project that will evaluate the use of blockchain-based banking methods for sales finding to show that implementing uses of artificial intelligence into banking systems can help improve efficiency and workload needed to be done by companies selling products and users using bank servicing apps to make transactions, which will be useful in the long haul as more time can be allocated to other important assets than sales such as secure purchasing and decentralisation. 
-## What are our goals?
-One of our goals includes creating and finalising this project in a professional manner which can be adapted to the liking of the clientele and any users. While we likely will not have the time for user feedback, we wish to implement it up to the stage where customers can use it and it can be easily adapted by a second-party. Another goal of ours is to make the program easy to understand and to almost eliminate the need for personal research and the doubt created by self research and uncertainty, helping transactions for the user go more smoothly and giving them reassurance that they are making a reliably chosen purchase. A further goal of ours is to gain knowledge and understand the generic concept behind the patterns created by sales in block-chain banking and ensure we can apply a robust system that efficiently analyses patterns in sales made by companies to promote the cheapest and most reliably sourced products in comparison to the lesser-known or ambiguous companies, allowing for ease of purchase and transactions to be made by the user. 
-## What features does the program have?
-The program 
 
-## How will this help customers?
-This new tool will empower Liminal customers to make smarter spending decisions by quickly identifying alternative products or services that meet their needs. By comparing options based on category, price, and relevance, customers can maximize the value of their purchases while ensuring they get exactly what they want. Ultimately, it helps users save time, discover better options, and spend their money more efficiently.
+## Overview
+The **Liminal AI Sales Finder Agent** is an intelligent assistant designed to help Liminal account holders make better purchasing decisions. By analysing a user’s historical transaction data, the agent identifies cheaper or more suitable alternative products and presents clear, actionable recommendations directly within Liminal’s chat interface.
 
-## What issues did we encounter?
-issues connecting to api, wifi issues, named it wrong instead of env and spent 3 hours on it
-## What flaws are in our final project and what could we improve?
+The goal is to reduce unnecessary spending, eliminate manual product research, and provide users with confidence that they are making informed and ethical purchasing decisions.
+
+## What Software Are We Creating?
+We are designing a **Sales Finder AI Agent** that analyses past purchases made by a Liminal user and determines whether more cost-effective or better-suited alternatives exist.
+
+The system is split into four core components:
+
+### 1. Receipt Reader
+Extracts and interprets data from a user’s previous transactions, including product type, category, and price.
+
+### 2. Competitor Finder
+Searches for similar products offered by alternative companies or providers.
+
+### 3. Product Comparator
+Compares the original purchase against available alternatives, highlighting differences in price, value, and potential benefits.
+
+### 4. Chat Output Agent
+Sends recommendations and insights to Liminal’s chat system in a clear, readable, and user-friendly format.
+
+## Project Aim
+This project is designed to align with Liminal’s values of **user consent, privacy, and transparency**. The agent only analyses authorised transaction data and provides explainable recommendations.
+
+Additionally, the project explores how **AI-driven analysis can be integrated into blockchain-based banking systems**. By automating sales comparison and pattern analysis, the system demonstrates how artificial intelligence can improve efficiency for both users and financial platforms, allowing greater focus on security, decentralisation, and ethical spending.
+
+## Goals
+Our primary goals for this project are:
+
+- Develop a **professional, modular system** that can be adapted or extended by a second-party developer
+- Minimise the need for manual product research by users, reducing uncertainty and decision fatigue
+- Help users feel confident that their purchases are **cost-effective, reliable, and ethically sourced**
+- Gain a deeper understanding of **sales patterns within blockchain-based banking systems** and apply this knowledge to intelligent recommendation logic
+
+## Features
+The Liminal AI Sales Finder Agent currently includes:
+
+- Analysis of recent transaction history
+- Alternative product suggestions based on past purchases
+- A recent transactions list for contextual recommendations
+- A chatbot interface that allows users to communicate directly with the agent through Liminal
+- Insight generation that explains *why* an alternative may be beneficial
+
+## How Does This Help Customers?
+This tool empowers Liminal users to make smarter financial decisions by:
+
+- Identifying cheaper or more suitable alternatives quickly
+- Saving time by eliminating manual research
+- Increasing transparency around spending choices
+- Helping users maximise value while maintaining trust and safety
+
+Overall, it enables users to spend more efficiently while staying informed and in control.
+
+## Challenges Encountered
+During development, we encountered several technical issues, including:
+
+- Difficulties connecting to required APIs
+- Network and Wi-Fi instability
+- Environment variable misconfiguration (incorrectly naming the `.env` file), which caused significant debugging delays
+
+These challenges provided valuable experience in debugging, configuration management, and development workflows.
+
+## Limitations and Future Improvements
+While functional, the current version of the project has limitations:
+
+- Limited time for user testing and feedback integration
+- Alternative suggestions are based on recent insights rather than long-term learning
+- Product matching could be improved with richer datasets and broader competitor coverage
+
+Future improvements could include:
+
+- More advanced pattern analysis over longer transaction histories
+- Improved recommendation accuracy using additional data sources
+- Enhanced explainability and customisation options for users
