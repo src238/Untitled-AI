@@ -136,7 +136,7 @@ export default function GraphAnalysis() {
 
   const doughnutOptions = {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top' as const },
     },
@@ -165,7 +165,7 @@ export default function GraphAnalysis() {
 
         {/* Category Doughnut Chart */}
         <div style={cardStyle}>
-          <div style={{ width: '80%', margin: '0 auto' }}>
+          <div style={{ width: '80%', margin: '0 auto', height: '30vh' }}>
             <Doughnut 
               data={doughnutData} 
               options={{ ...doughnutOptions, cutout: '68%', plugins: { ...doughnutOptions.plugins, title: { display: true, text: 'Spending by Category' }}}} 
