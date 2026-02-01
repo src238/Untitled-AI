@@ -365,7 +365,7 @@ background: var(--white);
 .action-btn {
 font-family: "ABC Marist", sans-serif;
 font-weight: 500;
-font-size: 1.2rem;
+font-size: 1.19rem;
 padding: 0.5rem;
 border: medium;
 border-radius: 8px;
@@ -415,7 +415,11 @@ margin: 1.5rem 0.25rem 0.5rem;
 .transactions-list {
 background: var(--white);
 overflow: hidden;
+<<<<<<< HEAD
 max-height: 67vh;
+=======
+max-height: 65vh;
+>>>>>>> 751f30bd2cbcce0060cc1fc6a94116e1df6bc157
 overflow-y: auto;
 border: black;
 border-style: solid;
@@ -425,6 +429,20 @@ border-top: none;
 border-top-left-radius: 0px;
 border-top-right-radius: 0px;
 }
+.transactions-recurring-list {
+background: var(--white);
+overflow: hidden;
+max-height: 50vh;
+overflow-y: auto;
+border: black;
+border-style: solid;
+border-radius: 8px;
+border-width: 0rem;
+border-top: none;
+border-top-left-radius: 0px;
+border-top-right-radius: 0px;
+}
+
 
 .transaction-item {
   display: flex;
