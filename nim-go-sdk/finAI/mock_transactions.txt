@@ -60,7 +60,7 @@ DATE       | MERCHANT                    | PRODUCT/SERVICE                      
 2026-01-10 | PlayStation Network        | PS Plus Premium (Annual)                  | $119.99 | F
 2026-01-10 | Panda Express              | Orange Chicken, Fried Rice, Spring Roll   | $13.89  | F
 2026-01-10 | PayPal                     | Refund - Nike.com order #NKE-88421        | $139.99 | T
-2026-01-09 | IKEA                       | Desk lamp, storage boxes, picture frames  | $67.43  | F
+2026-01-09 | IKEA                       | Blahaj Sharkyyy                           | $22.00  | F
 2026-01-09 | The New York Times         | Digital Subscription (Monthly)            | $17.00  | F
 2026-01-08 | Sephora                    | Skincare products, makeup                 | $87.65  | F
 2026-01-08 | Taco Bell                  | Crunchwrap Supreme Combo                  | $9.56   | F
