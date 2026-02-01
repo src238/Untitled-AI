@@ -58,8 +58,9 @@ export default function RecentTransactions({ transactions, balance }: RecentTran
           ) : (
             filteredTransactions.map(tx => (
               <div key={tx.id} className="transaction-item">
-                <div className="transaction-icon">
-                  {tx.isIncoming ? '↓' : '↑'}
+                <div className="transaction-icon"
+                    style={{ color: tx.isIncoming ? 'green' : 'red' }}>
+                    {tx.isIncoming ? '↑' : '↓'}
                 </div>
                 <div className="transaction-details">
                   <span className="transaction-description">{tx.description}</span>
