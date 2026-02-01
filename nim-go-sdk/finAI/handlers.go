@@ -17,25 +17,56 @@ func setupHTTPHandlers() {
 
 // handleAlerts returns recent alerts from the last 24 hours
 func handleAlerts(w http.ResponseWriter, r *http.Request) {
-	// Enable CORS
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Enable CORS - restrictive origin for production
+	origin := r.Header.Get("Origin")
+	if origin == "" || origin == "http://localhost:5173" || origin == "http://localhost:5174" || origin == "http://localhost:8080" {
+		if origin == "" {
+			origin = "http://localhost:5173"
+		}
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+	}
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Max-Age", "3600")
 	w.Header().Set("Content-Type", "application/json")
+
+	// Handle preflight OPTIONS request
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
 	alertsMutex.RLock()
 	defer alertsMutex.RUnlock()
 
 	// Return alerts from last 24 hours
 	recentAlerts := filterRecentAlerts(alerts, AlertRetentionHours)
-	json.NewEncoder(w).Encode(recentAlerts)
+	if err := json.NewEncoder(w).Encode(recentAlerts); err != nil {
+		http.Error(w, "Failed to encode alerts", http.StatusInternalServerError)
+		return
+	}
 }
 
 // handleTransactions returns all transactions from the mock data file
 func handleTransactions(w http.ResponseWriter, r *http.Request) {
-	// Enable CORS
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Enable CORS - restrictive origin for production
+	origin := r.Header.Get("Origin")
+	if origin == "" || origin == "http://localhost:5173" || origin == "http://localhost:5174" || origin == "http://localhost:8080" {
+		if origin == "" {
+			origin = "http://localhost:5173"
+		}
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+	}
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Max-Age", "3600")
 	w.Header().Set("Content-Type", "application/json")
+
+	// Handle preflight OPTIONS request
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
 	// Read and parse transactions
 	transactions, err := readMockTransactions()
@@ -46,7 +77,10 @@ func handleTransactions(w http.ResponseWriter, r *http.Request) {
 
 	// Convert to API format
 	formattedTransactions := formatTransactionsForAPI(transactions)
-	json.NewEncoder(w).Encode(formattedTransactions)
+	if err := json.NewEncoder(w).Encode(formattedTransactions); err != nil {
+		http.Error(w, "Failed to encode transactions", http.StatusInternalServerError)
+		return
+	}
 }
 
 // filterRecentAlerts returns alerts from the last N hours
@@ -71,7 +105,10 @@ func formatTransactionsForAPI(transactions []Transaction) []TransactionAPI {
 		// Parse amount (remove $ and convert to float)
 		amountStr := strings.TrimPrefix(tx.Amount, "$")
 		amount := 0.0
-		fmt.Sscanf(amountStr, "%f", &amount)
+		if _, err := fmt.Sscanf(amountStr, "%f", &amount); err != nil {
+			// Log error but continue with 0.0 as default
+			fmt.Printf("Warning: Failed to parse amount '%s': %v\n", amountStr, err)
+		}
 
 		formatted = append(formatted, TransactionAPI{
 			ID:          fmt.Sprintf("tx-%d", i+1),

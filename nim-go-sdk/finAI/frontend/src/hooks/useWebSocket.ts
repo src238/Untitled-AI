@@ -1,7 +1,7 @@
 // useWebSocket.ts - Custom hook for WebSocket connection management
 import { useEffect, useRef, useState } from 'react'
 import { Message, WebSocketMessage, Alert } from '../types'
-import { formatTimestamp } from '../utils/formatters'
+import { formatTimestamp } from '../utils/formatters.tsx'
 
 interface UseWebSocketProps {
   wsUrl: string

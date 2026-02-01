@@ -201,7 +201,10 @@ func extractSavingsAmount(recommendation string) float64 {
 	}
 
 	var savings float64
-	fmt.Sscanf(saveStr, "%f", &savings)
+	if _, err := fmt.Sscanf(saveStr, "%f", &savings); err != nil {
+		// Log error but return 0.0 as default
+		log.Printf("Warning: Failed to parse savings '%s': %v", saveStr, err)
+	}
 	return savings
 }
 

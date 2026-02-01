@@ -43,7 +43,13 @@ func createSpendingAnalyzerTool(liminalExecutor core.ToolExecutor) core.Tool {
 			txRequest := map[string]interface{}{
 				"limit": 100, // Get up to 100 transactions
 			}
-			txRequestJSON, _ := json.Marshal(txRequest)
+			txRequestJSON, err := json.Marshal(txRequest)
+			if err != nil {
+				return &core.ToolResult{
+					Success: false,
+					Error:   fmt.Sprintf("Error marshaling transaction request: %v", err),
+				}, nil
+			}
 
 			txResponse, err := liminalExecutor.Execute(ctx, &core.ExecuteRequest{
 				UserID:    toolParams.UserID,
@@ -121,8 +127,14 @@ func analyzeTransactions(transactions []map[string]interface{}, days int) map[st
 
 	for _, tx := range transactions {
 		// Example analysis logic
-		txType, _ := tx["type"].(string)
-		amount, _ := tx["amount"].(float64)
+		txType, ok := tx["type"].(string)
+		if !ok {
+			continue // Skip transactions with invalid type
+		}
+		amount, ok := tx["amount"].(float64)
+		if !ok {
+			continue // Skip transactions with invalid amount
+		}
 
 		switch txType {
 		case "send":
@@ -204,7 +216,13 @@ func createProductAnalyzerTool(liminalExecutor core.ToolExecutor, anthropicKey s
 			txRequest := map[string]interface{}{
 				"limit": params.Limit,
 			}
-			txRequestJSON, _ := json.Marshal(txRequest)
+			txRequestJSON, err := json.Marshal(txRequest)
+			if err != nil {
+				return &core.ToolResult{
+					Success: false,
+					Error:   fmt.Sprintf("Error marshaling transaction request: %v", err),
+				}, nil
+			}
 
 			txResponse, err := liminalExecutor.Execute(ctx, &core.ExecuteRequest{
 				UserID:    toolParams.UserID,
@@ -770,7 +788,10 @@ func createReadAlertsTool() core.Tool {
 			// Default to 24 hours
 			hours := 24
 			if params.Hours != "" {
-				fmt.Sscanf(params.Hours, "%d", &hours)
+				if _, err := fmt.Sscanf(params.Hours, "%d", &hours); err != nil {
+					// Log error but use default value
+					log.Printf("Warning: Failed to parse hours '%s': %v, using default 24", params.Hours, err)
+				}
 			}
 
 			// Read alerts
